@@ -18,6 +18,7 @@ local.properties
 
 #maven target directory
 target/
+*.class
 
 # External tool builders
 .externalToolBuilders/
