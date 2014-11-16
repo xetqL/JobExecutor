@@ -6,12 +6,8 @@
 package com.boulmier.machinelearning.jobexecutor;
 
 import com.boulmier.machinelearning.jobexecutor.config.JobExecutorConfig;
-import com.boulmier.machinelearning.jobexecutor.logging.ConsoleLogger;
-import com.boulmier.machinelearning.jobexecutor.logging.FileLogger;
 import com.boulmier.machinelearning.jobexecutor.logging.GlobalLogger;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
-import com.boulmier.machinelearning.jobexecutor.logging.MongoLogger;
-import org.apache.log4j.Logger;
 import com.jezhumble.javasysmon.*;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -56,6 +52,7 @@ public class JobExecutor {
 
         softwareOptions.addOption(ipOption);
         softwareOptions.addOption(portOption);
+        softwareOptions.addOption(mongoOption);
         return softwareOptions;
     }
 
