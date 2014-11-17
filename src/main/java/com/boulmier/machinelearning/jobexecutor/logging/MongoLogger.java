@@ -9,6 +9,7 @@ import com.boulmier.machinelearning.jobexecutor.config.JobExecutorConfig;
 import com.boulmier.machinelearning.jobexecutor.mongodb.Mongo;
 import com.boulmier.machinelearning.jobexecutor.mongodb.MongoConfig;
 import java.net.UnknownHostException;
+import org.apache.log4j.Level;
 import org.log4mongo.MongoDbAppender;
 
 /**
@@ -17,29 +18,22 @@ import org.log4mongo.MongoDbAppender;
  */
 public class MongoLogger extends ILogger {
 
-    private static final MongoDbAppender mApp = new MongoDbAppender();
-    private static boolean available = true;
-
-    static {
-        try {
-            mApp.setDatabaseName(JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_DATABASE);
-            mApp.setCollectionName(JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_COLLECTION);
-            mApp.setCollection(Mongo.getInstance(MongoConfig.build()).getLoggingCollection());
-        } catch (UnknownHostException | NullPointerException ex) {
-            available = false;
-        }
-    }
-
-    private MongoLogger() {
+    private MongoLogger(MongoDbAppender mApp) {
         super(mApp);
     }
 
     public static MongoLogger getLoggerInstance() {
-        if (available) {
-            return new MongoLogger();
-        } else {
+        MongoDbAppender mApp;
+        try {
+            mApp = new MongoDbAppender();
+            mApp.setDatabaseName(JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_DATABASE);
+            mApp.setCollectionName(JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_COLLECTION);
+            mApp.setCollection(Mongo.getInstance(MongoConfig.build()).getLoggingCollection());
+            mApp.setThreshold(Level.INFO);
+        } catch (UnknownHostException ex) {
             return null;
         }
+        return new MongoLogger(mApp);
     }
 
 }

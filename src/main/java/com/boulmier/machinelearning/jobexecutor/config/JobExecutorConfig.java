@@ -36,6 +36,11 @@ public interface JobExecutorConfig {
                     MONGODESCRIPTION = "Define the ip of the mongo server where we want to log the events";
             public final boolean ISMONGOREQUIERED = false;
       
+            //DEBUG OPT
+            public final String 
+                    LONGDEBUGFIELD  = "debug",
+                    SHORTDEBUGFIELD = "debug",
+                    DEBUGDESCRIPTION= "Enable the debug mode";
         }
 
         public abstract class LOGGING {

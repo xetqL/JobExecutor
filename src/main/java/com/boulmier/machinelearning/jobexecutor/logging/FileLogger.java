@@ -5,6 +5,7 @@
  */
 package com.boulmier.machinelearning.jobexecutor.logging;
 
+import com.boulmier.machinelearning.jobexecutor.JobExecutor;
 import java.io.IOException;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
@@ -14,9 +15,22 @@ import org.apache.log4j.PatternLayout;
  *
  * @author Boulmier
  */
-public class FileLogger extends ILogger{
-    static final String file = "~/JobExecutor.log";
-    public FileLogger() throws IOException {
-        super(new FileAppender(new PatternLayout(ILogger.DEFAULT_PATTERN), FileLogger.file));
+public class FileLogger extends ILogger {
+
+    static final String file = JobExecutor.sysMon.osName().matches(".*(Ubuntu|Debian|Linux|).*")? "./JobExecutor.log" : "JobExecutor.log";
+
+    private FileLogger(FileAppender fApp) {
+        super(fApp);
+    }
+
+    public static FileLogger getLoggerInstance() {
+        try {
+            FileAppender fApp = new FileAppender(new PatternLayout(ILogger.DEFAULT_PATTERN), FileLogger.file);
+            fApp.setThreshold(Level.INFO);
+            fApp.setAppend(false);
+            return new FileLogger(fApp);
+        } catch (IOException ex) {
+            return null;
+        }
     }
 }

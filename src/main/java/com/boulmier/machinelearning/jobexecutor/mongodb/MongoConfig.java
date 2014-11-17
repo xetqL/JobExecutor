@@ -28,7 +28,7 @@ public class MongoConfig extends HashMap<String,String>{
     public static final String 
             IP_FIELD                    = "ip",
             PORT_FIELD                  = "port",
-            DEFAULT_COLLECTION_FIELD    = "schema";
+            DEFAULT_COLLECTION_FIELD    = "events";
 
     private MongoConfig() {
         this.put(DEFAULT_COLLECTION_FIELD, 

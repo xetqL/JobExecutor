@@ -45,9 +45,9 @@ public class Mongo {
             
             client = new MongoClient(host.toString(), MongoClientOptions.builder().connectTimeout(100).build());//new MongoClient(ip, port);
             try {
-                client.getConnector().getDBPortPool(client.getAddress()).get().ensureOpen();
+                client.getDB(JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_DATABASE).command("ping");
                 instance = new Mongo(client);
-            } catch (IOException | MongoTimeoutException e) {
+            } catch (MongoTimeoutException e) {
                 throw new UnknownHostException();
             }
         }

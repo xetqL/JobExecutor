@@ -7,6 +7,7 @@ package com.boulmier.machinelearning.jobexecutor.logging;
 
 import com.boulmier.machinelearning.jobexecutor.JobExecutor;
 import org.apache.log4j.Appender;
+import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -17,14 +18,13 @@ import org.apache.log4j.Logger;
  */
 public abstract class ILogger {
 
-    final Logger log = Logger.getLogger(JobExecutor.class);
-    protected final Appender app;
     static final String DEFAULT_PATTERN = "%d [%-5p] (%F:%M:%L) %m%n";
-
-    public ILogger(Appender app) {
-        this.app = app;
+    private final Logger log = Logger.getLogger(JobExecutor.class);
+    
+    public ILogger(AppenderSkeleton app){        
         log.addAppender(app);
-        log.setLevel(Level.ALL);
+        log.setLevel(Level.TRACE);
+        log.setAdditivity(false);
     }
 
     public void log(Level lvl, String message) {
@@ -48,7 +48,7 @@ public abstract class ILogger {
     }
 
     public void debug(String message) {
-        log.debug(message);
+        if(JobExecutor.debugState) log.debug(message);
     }
 
     public void info(String message) {
@@ -66,4 +66,5 @@ public abstract class ILogger {
     public void fatal(String message) {
         log.fatal(message);
     }
+    
 }
