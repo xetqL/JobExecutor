@@ -14,10 +14,11 @@ import com.boulmier.machinelearning.jobexecutor.JobExecutor;
 public class LoggerFactory {
 
     private static ILogger logger = null;
-    private static final ILogger debugger =  ConsoleLogger.getLoggerInstance();
+    private static ILogger debugger = null;
     public static ILogger getLogger(){
         if(logger == null){
             if(JobExecutor.debugState){
+                debugger = ConsoleLogger.getLoggerInstance();
                 logger = debugger;
                 logger.debug("Debugging mode activated successfully ! ");
             }else{

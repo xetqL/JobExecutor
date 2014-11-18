@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 public abstract class ILogger {
 
     static final String DEFAULT_PATTERN = "%d [%-5p] (%F:%M:%L) %m%n";
-    private final Logger log = Logger.getLogger(JobExecutor.class);
+    public final Logger log = Logger.getLogger(JobExecutor.class);
     
     public ILogger(AppenderSkeleton app){        
         log.addAppender(app);

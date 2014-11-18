@@ -78,8 +78,13 @@ public class JobExecutor {
         } catch (MissingOptionException moe) {
             HelpFormatter help = new HelpFormatter();
             help.printHelp(JobExecutor.class.getSimpleName(), options);
-        } catch (UnknownHostException ex) {
-
-        }
+        } catch (UnknownHostException ex) {}
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            @Override
+            public void run() {
+                logger.info("Leaving system");
+            }
+        });
     }
+    
 }
