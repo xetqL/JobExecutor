@@ -36,7 +36,7 @@ public class MongoConfig extends HashMap<String,String>{
         this.put(IP_FIELD, 
                 JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_IP);
         this.put(PORT_FIELD, 
-                JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_PORT);
+                String.valueOf(JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_PORT));
     }
 
     public static MongoConfig build() {

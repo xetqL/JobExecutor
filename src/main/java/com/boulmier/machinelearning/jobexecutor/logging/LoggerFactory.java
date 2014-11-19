@@ -20,7 +20,7 @@ public class LoggerFactory {
             if(JobExecutor.debugState){
                 debugger = ConsoleLogger.getLoggerInstance();
                 logger = debugger;
-                logger.debug("Debugging mode activated successfully ! ");
+                logger.log.debug("Debugging mode activated successfully ! ");
             }else{
                 if(logger == null){
                     logger = MongoLogger.getLoggerInstance();

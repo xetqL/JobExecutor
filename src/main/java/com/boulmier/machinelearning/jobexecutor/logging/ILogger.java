@@ -18,19 +18,19 @@ import org.apache.log4j.Logger;
  */
 public abstract class ILogger {
 
-    static final String DEFAULT_PATTERN = "%d [%-5p] (%F:%M:%L) %m%n";
+    static final String DEFAULT_PATTERN = "%d [%-5p] %m%n";
     public final Logger log = Logger.getLogger(JobExecutor.class);
     
     public ILogger(AppenderSkeleton app){        
         log.addAppender(app);
-        log.setLevel(Level.TRACE);
+        log.setLevel(Level.ALL);
         log.setAdditivity(false);
     }
 
     public void log(Level lvl, String message) {
         switch (lvl.toInt()) {
             case Level.DEBUG_INT:
-                debug(message);
+                log.debug(message);
                 break;
             case Level.ERROR_INT:
                 error(message);
@@ -45,10 +45,6 @@ public abstract class ILogger {
                 info(message);
                 break;
         }
-    }
-
-    public void debug(String message) {
-        if(JobExecutor.debugState) log.debug(message);
     }
 
     public void info(String message) {
