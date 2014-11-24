@@ -10,6 +10,8 @@ import com.boulmier.machinelearning.jobexecutor.JobExecutor;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.DefaultExecutor;
@@ -22,8 +24,9 @@ import org.apache.commons.exec.PumpStreamHandler;
  */
 public abstract class Job {
 
-    protected  String jobid;
+    protected String jobid;
     protected CommandLine cl;
+    protected String executableName;
     
     public void start() throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -43,20 +46,33 @@ public abstract class Job {
             @Override
             public void run() {
                 try {
-                    
                     handler.waitFor();
-                    
+                    //
+                    //TODO : send back to master
+                    //
                     JobExecutor.logger.info("Job is complete " + jobid);
                 } catch (InterruptedException ex) {
                     exec.getWatchdog().destroyProcess();
                     JobExecutor.logger.error("Job ("+jobid+") has been destroyed due to internal error");
                 }
             }
-            
         }).start();
         
     }
     
-    protected abstract CommandLine generateCommandLine(HashMap<String,String> params);
+    protected CommandLine generateCommandLine(HashMap<String,String> params){
+        StringBuilder argumentBuilder;
+        this.executableName = params.get(JobConfig.EXECUTABLE);
+        params.remove(JobConfig.EXECUTABLE);
+        this.cl = new CommandLine(executableName);
+        for(Map.Entry<String,String> entry : params.entrySet()){
+            argumentBuilder = new StringBuilder()
+                    .append(entry.getKey())
+                    .append(" ")
+                    .append(entry.getValue());
+            this.cl.addArgument(argumentBuilder.toString());
+        }
+        return cl;
+    }
     
 }

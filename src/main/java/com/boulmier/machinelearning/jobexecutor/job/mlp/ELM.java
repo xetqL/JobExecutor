@@ -8,7 +8,6 @@ package com.boulmier.machinelearning.jobexecutor.job.mlp;
 
 import com.boulmier.machinelearning.jobexecutor.job.Job;
 import java.util.HashMap;
-import org.apache.commons.exec.CommandLine;
 
 /**
  *
@@ -19,10 +18,5 @@ public class ELM extends Job{
     public ELM(HashMap<String,String> params, String id) {
         this.cl     = generateCommandLine(params);
         this.jobid  = id;
-    }
-
-    @Override
-    protected final CommandLine generateCommandLine(HashMap<String,String> params) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }   
+    } 
 }
