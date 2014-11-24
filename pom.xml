@@ -16,12 +16,6 @@
             <groupId>com.outr.javasysmon</groupId>
             <artifactId>javasysmon_2.10</artifactId>
             <version>0.3.4</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-library</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         
         <dependency>

@@ -6,11 +6,11 @@
 package com.bachelor.boulmier.workmaster;
 
 import com.bachelor.boulmier.workmaster.config.MasterConfig;
+import com.jezhumble.javasysmon.JavaSysMon;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.MissingOptionException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
@@ -66,11 +66,11 @@ public class WorkMaster {
     }
 
     private static int maxVM = 6;
-    private static boolean cliEnabled = false,
+    public static boolean cliEnabled = false,
             debug = false,
             verbose = false;
     private static String webServer = MasterConfig.DEFAULT.DEFAULTWS;
-
+    public static JavaSysMon sysMon = new JavaSysMon();
     public static void printHelp() {
         HelpFormatter help = new HelpFormatter();
         help.printHelp(WorkMaster.class.getSimpleName(), options);
@@ -78,6 +78,7 @@ public class WorkMaster {
 
     public static void main(String[] args) {
         defineOptions();
+        
         CommandLineParser parser = new BasicParser();
         CommandLine cmd;
         try {
