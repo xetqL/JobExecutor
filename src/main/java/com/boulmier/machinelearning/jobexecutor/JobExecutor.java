@@ -6,6 +6,7 @@
 package com.boulmier.machinelearning.jobexecutor;
 
 import com.boulmier.machinelearning.jobexecutor.config.JobExecutorConfig;
+import com.boulmier.machinelearning.jobexecutor.consumer.RequestConsumer;
 import com.boulmier.machinelearning.jobexecutor.job.mlp.DIMLP;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
 import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
@@ -75,7 +76,7 @@ public class JobExecutor {
     public static boolean debugState;
     public static ILogger logger;
 
-    public static void main(String[] args) throws ParseException, IOException {
+    public static void main(String[] args) throws ParseException, IOException, InterruptedException {
         Options options = defineOptions();
         sysMon = new JavaSysMon();
         InetAddress vmscheduler_ip, mongodb_ip;
@@ -91,8 +92,8 @@ public class JobExecutor {
             
             logger = LoggerFactory.getLogger();
             logger.info("Attempt to connect on master @" + vmscheduler_ip + ":" + vmscheduler_port);
-            new DIMLP(null, "1").start();
-
+            RequestConsumer consumer = new RequestConsumer();
+            consumer.consumeOne();
         } catch (MissingOptionException moe) {
 
             HelpFormatter help = new HelpFormatter();

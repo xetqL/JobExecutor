@@ -5,8 +5,13 @@
  */
 package com.bachelor.boulmier.workmaster;
 
+import com.bachelor.boulmier.workmaster.queuing.QueuingService;
 import com.bachelor.boulmier.workmaster.config.MasterConfig;
+import com.boulmier.machinelearning.jobexecutor.logging.ConsoleLogger;
+import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
+import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
 import com.jezhumble.javasysmon.JavaSysMon;
+import java.io.IOException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -66,19 +71,24 @@ public class WorkMaster {
     }
 
     private static int maxVM = 6;
-    public static boolean cliEnabled = false,
+    public static boolean 
+            cliEnabled = false,
             debug = false,
             verbose = false;
     private static String webServer = MasterConfig.DEFAULT.DEFAULTWS;
+    
+    
     public static JavaSysMon sysMon = new JavaSysMon();
+    public static ILogger logger;
+    public static QueuingService queuingService = QueuingService.get();
+    
     public static void printHelp() {
         HelpFormatter help = new HelpFormatter();
         help.printHelp(WorkMaster.class.getSimpleName(), options);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         defineOptions();
-        
         CommandLineParser parser = new BasicParser();
         CommandLine cmd;
         try {
@@ -100,13 +110,13 @@ public class WorkMaster {
                 webServer = cmd.getOptionValue(MasterConfig.CMD.REMOTEWSLONGOPT);
                 if(!webServer.matches("^"+MasterConfig.DEFAULT.IP_PATTERN+":"+MasterConfig.DEFAULT.PORT_PATTERN))
                     throw new ParseException("The given web server IP was wrong");
-                
             }
 
             if (cmd.hasOption(MasterConfig.CMD.HELPLONGOPT)) {
                 printHelp();
             }
-
+            logger = LoggerFactory.getLogger();
+            queuingService.send(new Request("DIMLP", "Discretized Interpretable Multi Layer Perceptron"));
         } catch (ParseException pe) {
             System.err.println(pe.getMessage());
             printHelp();
