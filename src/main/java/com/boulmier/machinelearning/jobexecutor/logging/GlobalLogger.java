@@ -19,11 +19,11 @@ public class GlobalLogger {
             logger = MongoLogger.getLoggerInstance();
         if(logger == null){
             logger = new ConsoleLogger();
-            logger.error("Mongo unavailable logging into Console");
+            logger.error("Mongo unavailable, logging into Console");
         }
         if(logger == null){
             logger = new FileLogger();
-            logger.error("Mongo unavailable logging into File");
+            logger.error("Mongo unavailable, logging into File");
         }
         return logger;
     }
