@@ -8,7 +8,6 @@ import java.util.HashMap;
  */
 public class DIMLP extends Job{
     public DIMLP(HashMap<String,String> params, String id) {
-        this.cl     = generateCommandLine(params);
-        this.jobid  = id;
+        super(params,id);
     }
 }

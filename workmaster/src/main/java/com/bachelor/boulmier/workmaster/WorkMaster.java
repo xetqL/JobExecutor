@@ -5,13 +5,15 @@
  */
 package com.bachelor.boulmier.workmaster;
 
+import com.bachelor.boulmier.workmaster.queuing.Request;
 import com.bachelor.boulmier.workmaster.queuing.QueuingService;
 import com.bachelor.boulmier.workmaster.config.MasterConfig;
-import com.boulmier.machinelearning.jobexecutor.logging.ConsoleLogger;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
 import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
 import com.jezhumble.javasysmon.JavaSysMon;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -77,7 +79,6 @@ public class WorkMaster {
             verbose = false;
     private static String webServer = MasterConfig.DEFAULT.DEFAULTWS;
     
-    
     public static JavaSysMon sysMon = new JavaSysMon();
     public static ILogger logger;
     public static QueuingService queuingService = QueuingService.get();
@@ -116,10 +117,15 @@ public class WorkMaster {
                 printHelp();
             }
             logger = LoggerFactory.getLogger();
-            queuingService.send(new Request("DIMLP", "Discretized Interpretable Multi Layer Perceptron"));
+            while(true){
+                queuingService.send(new Request("DIMLP", "Discretized Interpretable Multi Layer Perceptron"));
+                Thread.sleep(1000);
+            }
         } catch (ParseException pe) {
             System.err.println(pe.getMessage());
             printHelp();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(WorkMaster.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

@@ -7,14 +7,12 @@ package com.boulmier.machinelearning.jobexecutor;
 
 import com.boulmier.machinelearning.jobexecutor.config.JobExecutorConfig;
 import com.boulmier.machinelearning.jobexecutor.consumer.RequestConsumer;
-import com.boulmier.machinelearning.jobexecutor.job.mlp.DIMLP;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
 import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
 import com.jezhumble.javasysmon.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.UUID;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -30,7 +28,7 @@ import org.apache.commons.cli.ParseException;
  * @author Boulmier
  */
 public class JobExecutor {
-
+    
     @SuppressWarnings("static-access")
     public static Options defineOptions() {
         Options softwareOptions = new Options();
@@ -42,7 +40,6 @@ public class JobExecutor {
                 .create(),
                 portOption = OptionBuilder.withArgName(JobExecutorConfig.OPTIONS.CMD.SHORTPORTFIELD)
                 .withLongOpt(JobExecutorConfig.OPTIONS.CMD.LONGPORTFIELD)
-                .isRequired(JobExecutorConfig.OPTIONS.CMD.ISPORTREQUIERED)
                 .withDescription(JobExecutorConfig.OPTIONS.CMD.PORTDESCRIPTION)
                 .withType(JobExecutorConfig.OPTIONS.CMD.PORTTYPE)
                 .hasArg()
@@ -62,29 +59,31 @@ public class JobExecutor {
                 debugOption = OptionBuilder.withArgName(JobExecutorConfig.OPTIONS.CMD.SHORTDEBUGFIELD)
                 .withLongOpt(JobExecutorConfig.OPTIONS.CMD.LONGDEBUGFIELD)
                 .create();
-
+        
         softwareOptions.addOption(ipOption);
         softwareOptions.addOption(portOption);
         softwareOptions.addOption(mongoIpOption);
         softwareOptions.addOption(debugOption);
         softwareOptions.addOption(mongoPortOption);
-
+        
         return softwareOptions;
     }
-
+    
     public static JavaSysMon sysMon;
     public static boolean debugState;
     public static ILogger logger;
-
+    
     public static void main(String[] args) throws ParseException, IOException, InterruptedException {
         Options options = defineOptions();
         sysMon = new JavaSysMon();
         InetAddress vmscheduler_ip, mongodb_ip;
-        int vmscheduler_port,mongodb_port;
+        Integer vmscheduler_port = null, mongodb_port;
         CommandLineParser parser = new BasicParser();
         try {
             CommandLine cmd = parser.parse(options, args);
-            vmscheduler_port = Integer.valueOf(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGPORTFIELD));
+            if (cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGPORTFIELD)) {
+                vmscheduler_port = Integer.valueOf(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGPORTFIELD));
+            }
             mongodb_port = (int) (cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGMONGOPORTFIELD) ? cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGMONGOPORTFIELD) : JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_PORT);
             vmscheduler_ip = InetAddress.getByName(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGIPFIELD));
             mongodb_ip = InetAddress.getByName(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGMONGOIPFIELD));
@@ -92,14 +91,13 @@ public class JobExecutor {
             
             logger = LoggerFactory.getLogger();
             logger.info("Attempt to connect on master @" + vmscheduler_ip + ":" + vmscheduler_port);
-            RequestConsumer consumer = new RequestConsumer();
-            consumer.consumeOne();
         } catch (MissingOptionException moe) {
-
+            
             HelpFormatter help = new HelpFormatter();
             help.printHelp(JobExecutor.class.getSimpleName(), options);
-
+            
         } catch (UnknownHostException ex) {
+            
         } finally {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
@@ -109,5 +107,5 @@ public class JobExecutor {
             });
         }
     }
-
+    
 }

@@ -27,6 +27,11 @@ public abstract class Job {
     protected String jobid;
     protected CommandLine cl;
     protected String executableName;
+
+    public Job(HashMap<String,String> params, String id) {
+        this.cl     = generateCommandLine(params);
+        this.jobid  = id;
+    }
     
     public void start() throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -60,7 +65,7 @@ public abstract class Job {
         
     }
     
-    protected CommandLine generateCommandLine(HashMap<String,String> params){
+    protected final CommandLine generateCommandLine(HashMap<String,String> params){
         StringBuilder argumentBuilder;
         this.executableName = params.get(JobConfig.EXECUTABLE);
         params.remove(JobConfig.EXECUTABLE);

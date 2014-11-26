@@ -5,25 +5,33 @@
  */
 package com.boulmier.machinelearning.jobexecutor.consumer;
 
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Connection;
+import com.boulmier.machinelearning.jobexecutor.JobExecutor;
+import com.boulmier.machinelearning.jobexecutor.job.mlp.DIMLP;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author anthob
  */
-public class RequestConsumer {
+public class RequestConsumer extends Thread{
 
-    private static final String QUEUE_NAME = "master";
+    private static final String QUEUE_NAME = "master", DEFAULT_HOST="localhost";
     private final Connection connection;
     private final Channel channel;
     private final QueueingConsumer consumer;
     public RequestConsumer() throws IOException {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
+        factory.setHost(DEFAULT_HOST);
         connection = factory.newConnection();
         channel = connection.createChannel();
         channel.queueDeclare(QUEUE_NAME, false, false, false, null);
@@ -32,10 +40,34 @@ public class RequestConsumer {
         channel.basicConsume(QUEUE_NAME, true, consumer);
     }
 
-    public void consumeOne() throws InterruptedException {
+    public RequestConsumer(InetAddress vmscheduler_ip, Integer port) throws IOException {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(vmscheduler_ip.getHostAddress());
+        if(port != null) 
+            factory.setPort(port);
+        connection = factory.newConnection();
+        channel = connection.createChannel();
+        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        consumer = new QueueingConsumer(channel);
+        channel.basicConsume(QUEUE_NAME, true, consumer);    }
+
+    private String consumeOne() throws InterruptedException {
         QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-        String message = new String(delivery.getBody());
-        System.out.println(" [x] Received '" + message + "'");
+        return new String(delivery.getBody());
     }
 
+    @Override
+    public void run() {
+        String message;
+        Gson gson = new GsonBuilder().create();
+        while(true){
+            try {
+                message = consumeOne();
+                HashMap req = gson.fromJson(message, HashMap.class);
+            } catch (InterruptedException ex) {
+                JobExecutor.logger.error(ex.getMessage());
+            }
+        }
+    }
+    
 }

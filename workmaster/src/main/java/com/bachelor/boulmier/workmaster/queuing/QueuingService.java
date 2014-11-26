@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -13,7 +14,7 @@ import java.util.HashMap;
  *
  * @author antho
  */
-public class QueuingService {
+public class QueuingService implements Closeable{
 
     private static final String name = "master",
             host = "127.0.0.1";
@@ -56,6 +57,14 @@ public class QueuingService {
     public void send(HashMap<String, String> request) throws IOException {
         Gson gson = new GsonBuilder().create();
         channel.basicPublish("", name, null, gson.toJson(request, HashMap.class).getBytes());
+    }
+
+    @Override
+    public void close() throws IOException {
+        
+        channel.close();
+        connection.close();
+        
     }
 
 }
