@@ -8,6 +8,7 @@ package com.bachelor.boulmier.workmaster;
 import com.bachelor.boulmier.workmaster.queuing.Request;
 import com.bachelor.boulmier.workmaster.queuing.QueuingService;
 import com.bachelor.boulmier.workmaster.config.MasterConfig;
+import com.bachelor.boulmier.workmaster.queuing.RequestBuilder;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
 import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
 import com.jezhumble.javasysmon.JavaSysMon;
@@ -34,6 +35,7 @@ public class WorkMaster {
     @SuppressWarnings("static-access")
     private static void defineOptions() {
         options = new Options();
+        
         Option maxVMOption = OptionBuilder
                 .withLongOpt(MasterConfig.CMD.MAXVMLONGOPT)
                 .withArgName(MasterConfig.CMD.MAXVMARG)
@@ -117,15 +119,10 @@ public class WorkMaster {
                 printHelp();
             }
             logger = LoggerFactory.getLogger();
-            while(true){
-                queuingService.send(new Request("DIMLP", "Discretized Interpretable Multi Layer Perceptron"));
-                Thread.sleep(1000);
-            }
+            
         } catch (ParseException pe) {
             System.err.println(pe.getMessage());
             printHelp();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(WorkMaster.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.bachelor.boulmier.workmaster.queuing;
 
 import java.util.HashMap;
@@ -13,9 +8,30 @@ import java.util.HashMap;
  */
 public class Request extends HashMap<String,String>{
 
-    public Request(String executable,String name) {
-        put("executable", executable);
-        put("name",name);
+    public Request() {
     }
     
+    public void setExecutableName(String name){
+        put("executablename",name);
+    }
+    
+    public void setNumberOfHiddenNeurons(int n){
+        put("hidden",String.valueOf(n));
+    }
+    
+    public void setNumberOfEpoch(int n){
+        put("epoch",String.valueOf(n));
+    }
+    
+    public void setNumberOfInputNeurons(int n){
+        put("input", String.valueOf(n));
+    }
+        
+    public void setTrainingSetURI(String uri){
+        put("trainingset", uri);
+    }
+    
+    public void setTestingSetURI(String uri){
+        put("testingset", uri);
+    }
 }

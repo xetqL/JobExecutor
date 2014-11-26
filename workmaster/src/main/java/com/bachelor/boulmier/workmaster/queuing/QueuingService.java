@@ -1,6 +1,5 @@
 package com.bachelor.boulmier.workmaster.queuing;
 
-import com.bachelor.boulmier.workmaster.WorkMaster;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rabbitmq.client.Channel;
@@ -30,7 +29,8 @@ public class QueuingService implements Closeable{
             channel = connection.createChannel();
             channel.queueDeclare(name, false, false, false, null);
         } catch (IOException ex) {
-            System.err.println("RabbitMQ server is not installed !");
+            System.err.println("RabbitMQ server is not installed !\nexit...");
+            System.exit(0);
         }
     }
 
@@ -61,10 +61,8 @@ public class QueuingService implements Closeable{
 
     @Override
     public void close() throws IOException {
-        
         channel.close();
         connection.close();
-        
     }
 
 }
