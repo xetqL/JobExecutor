@@ -57,6 +57,7 @@ public class QueuingService implements Closeable{
     public void send(HashMap<String, String> request) throws IOException {
         Gson gson = new GsonBuilder().create();
         channel.basicPublish("", name, null, gson.toJson(request, HashMap.class).getBytes());
+        
     }
 
     @Override
