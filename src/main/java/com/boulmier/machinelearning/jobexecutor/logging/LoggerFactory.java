@@ -28,7 +28,7 @@ public class LoggerFactory {
                         logger = FileLogger.getLoggerInstance();
                     }
                     if(logger == null){
-                        logger = debugger;
+                        logger = ConsoleLogger.getLoggerInstance();
                         logger.error("Mongo unavailable logging into console");
                     } else {
                         logger.error("Mongo unavailable logging into file");

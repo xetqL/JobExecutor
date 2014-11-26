@@ -40,6 +40,7 @@ public abstract class Job {
         final PumpStreamHandler output = new PumpStreamHandler(out);
         final DefaultExecuteResultHandler handler = new DefaultExecuteResultHandler();
         
+        
         exec.setWatchdog(wd);
         exec.setStreamHandler(output);
         exec.execute(cl,handler);
