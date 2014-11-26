@@ -28,7 +28,7 @@ public class MongoConfig extends HashMap<String,String>{
     public static final String 
             IP_FIELD                    = "ip",
             PORT_FIELD                  = "port",
-            DEFAULT_COLLECTION_FIELD    = "schema";
+            DEFAULT_COLLECTION_FIELD    = "events";
 
     private MongoConfig() {
         this.put(DEFAULT_COLLECTION_FIELD, 
@@ -36,7 +36,7 @@ public class MongoConfig extends HashMap<String,String>{
         this.put(IP_FIELD, 
                 JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_IP);
         this.put(PORT_FIELD, 
-                JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_PORT);
+                String.valueOf(JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_PORT));
     }
 
     public static MongoConfig build() {

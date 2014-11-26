@@ -5,7 +5,7 @@
  */
 package com.boulmier.machinelearning.jobexecutor.logging;
 
-import com.boulmier.machinelearning.jobexecutor.JobExecutor;
+import com.bachelor.boulmier.workmaster.WorkMaster;
 import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.FileAppender;
@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 public abstract class ILogger {
 
     static final String DEFAULT_PATTERN = "%d [%-5p] %m%n";
-    public final Logger log = Logger.getLogger(JobExecutor.class);
+    public final Logger log = Logger.getLogger(WorkMaster.class);
     
     public ILogger(AppenderSkeleton app){        
         log.addAppender(app);

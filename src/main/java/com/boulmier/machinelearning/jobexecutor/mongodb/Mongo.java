@@ -5,6 +5,7 @@
  */
 package com.boulmier.machinelearning.jobexecutor.mongodb;
 
+import com.boulmier.machinelearning.jobexecutor.JobExecutor;
 import com.boulmier.machinelearning.jobexecutor.config.JobExecutorConfig;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -45,9 +46,10 @@ public class Mongo {
             
             client = new MongoClient(host.toString(), MongoClientOptions.builder().connectTimeout(100).build());//new MongoClient(ip, port);
             try {
-                client.getConnector().getDBPortPool(client.getAddress()).get().ensureOpen();
+                client.getDB(JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_DATABASE).command("ping");
                 instance = new Mongo(client);
-            } catch (IOException | MongoTimeoutException e) {
+                JobExecutor.logger.info("mongodb accessible at "+host);
+            } catch (MongoTimeoutException e) {
                 throw new UnknownHostException();
             }
         }
