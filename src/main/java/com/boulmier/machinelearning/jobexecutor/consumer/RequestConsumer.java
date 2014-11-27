@@ -6,19 +6,14 @@
 package com.boulmier.machinelearning.jobexecutor.consumer;
 
 import com.boulmier.machinelearning.jobexecutor.JobExecutor;
-import com.boulmier.machinelearning.jobexecutor.job.mlp.DIMLP;
+import com.boulmier.machinelearning.jobexecutor.request.Request;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -35,10 +30,11 @@ public class RequestConsumer extends Thread{
         factory.setHost(DEFAULT_HOST);
         connection = factory.newConnection();
         channel = connection.createChannel();
-        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        channel.queueDeclare(QUEUE_NAME, true, false, false, null);
         System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
         consumer = new QueueingConsumer(channel);
-        channel.basicConsume(QUEUE_NAME, true, consumer);
+        channel.basicConsume(QUEUE_NAME, false, consumer);
+        
     }
 
     public RequestConsumer(InetAddress vmscheduler_ip, Integer port) throws IOException {
@@ -48,28 +44,31 @@ public class RequestConsumer extends Thread{
             factory.setPort(port);
         connection = factory.newConnection();
         channel = connection.createChannel();
-        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        channel.queueDeclare(QUEUE_NAME, true, false, false, null);
         consumer = new QueueingConsumer(channel);
-        channel.basicConsume(QUEUE_NAME, true, consumer);    }
+        channel.basicConsume(QUEUE_NAME, false, consumer);    
+    }
 
-    
-
+   
     @Override
     public void run() {
         String message;
         long tag;
-        Gson gson = new GsonBuilder().create();
+        Gson gson = new Gson();
+        int i = 1;
         while(true){
             try {
                 QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-                message = Arrays.toString(delivery.getBody());
+                message = new String(delivery.getBody());
                 tag = delivery.getEnvelope().getDeliveryTag();
-                HashMap req = gson.fromJson(message, HashMap.class);
-                channel.basicAck(tag, true);
+                gson.fromJson(message, Request.class);
+                channel.basicAck(tag, false);
+                System.err.println(message);
+                i++;
             } catch (InterruptedException ex) {
                 JobExecutor.logger.error(ex.getMessage());
             } catch (IOException ex) {
-                Logger.getLogger(RequestConsumer.class.getName()).log(Level.SEVERE, null, ex);
+                JobExecutor.logger.error(ex.getMessage());
             }
         }
     }

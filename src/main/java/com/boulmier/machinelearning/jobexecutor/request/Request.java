@@ -1,4 +1,4 @@
-package com.bachelor.boulmier.workmaster.queuing;
+package com.boulmier.machinelearning.jobexecutor.request;
 
 public class Request {
 
