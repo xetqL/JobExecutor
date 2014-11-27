@@ -1,5 +1,8 @@
 *.class
 *.log
+*.jar
+*.properties
+.netbeans_automatic_build
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
