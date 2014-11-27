@@ -15,6 +15,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,21 +52,24 @@ public class RequestConsumer extends Thread{
         consumer = new QueueingConsumer(channel);
         channel.basicConsume(QUEUE_NAME, true, consumer);    }
 
-    private String consumeOne() throws InterruptedException {
-        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-        return new String(delivery.getBody());
-    }
+    
 
     @Override
     public void run() {
         String message;
+        long tag;
         Gson gson = new GsonBuilder().create();
         while(true){
             try {
-                message = consumeOne();
+                QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+                message = Arrays.toString(delivery.getBody());
+                tag = delivery.getEnvelope().getDeliveryTag();
                 HashMap req = gson.fromJson(message, HashMap.class);
+                channel.basicAck(tag, true);
             } catch (InterruptedException ex) {
                 JobExecutor.logger.error(ex.getMessage());
+            } catch (IOException ex) {
+                Logger.getLogger(RequestConsumer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

@@ -5,16 +5,12 @@
  */
 package com.bachelor.boulmier.workmaster;
 
-import com.bachelor.boulmier.workmaster.queuing.Request;
 import com.bachelor.boulmier.workmaster.queuing.QueuingService;
 import com.bachelor.boulmier.workmaster.config.MasterConfig;
-import com.bachelor.boulmier.workmaster.queuing.RequestBuilder;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
 import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
 import com.jezhumble.javasysmon.JavaSysMon;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
