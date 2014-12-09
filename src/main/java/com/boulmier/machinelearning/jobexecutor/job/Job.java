@@ -7,10 +7,11 @@
 package com.boulmier.machinelearning.jobexecutor.job;
 
 import com.boulmier.machinelearning.jobexecutor.JobExecutor;
+import com.boulmier.machinelearning.jobexecutor.consumer.SenderComputer;
+import com.boulmier.machinelearning.jobexecutor.consumer.StorageComputer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
@@ -34,9 +35,9 @@ public abstract class Job {
     }
     
     public void start() throws IOException {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final DefaultExecutor exec = new DefaultExecutor();
-        final ExecuteWatchdog wd = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
+        final ByteArrayOutputStream out= new ByteArrayOutputStream();
+        final DefaultExecutor exec     = new DefaultExecutor();
+        final ExecuteWatchdog wd       = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
         final PumpStreamHandler output = new PumpStreamHandler(out);
         final DefaultExecuteResultHandler handler = new DefaultExecuteResultHandler();
         
@@ -53,15 +54,14 @@ public abstract class Job {
             public void run() {
                 try {
                     handler.waitFor();
-                    //
-                    //TODO : send back to master
-                    //
+                    new SenderComputer( new StorageComputer( out.toString() ) ).compute();
                     JobExecutor.logger.info("Job is complete " + jobid);
                 } catch (InterruptedException ex) {
                     exec.getWatchdog().destroyProcess();
                     JobExecutor.logger.error("Job ("+jobid+") has been destroyed due to internal error");
                 }
             }
+            
         }).start();
         
     }

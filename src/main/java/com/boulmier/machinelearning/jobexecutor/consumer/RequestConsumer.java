@@ -65,9 +65,7 @@ public class RequestConsumer extends Thread{
                 channel.basicAck(tag, false);
                 System.err.println(message);
                 i++;
-            } catch (InterruptedException ex) {
-                JobExecutor.logger.error(ex.getMessage());
-            } catch (IOException ex) {
+            } catch (InterruptedException | IOException ex) {
                 JobExecutor.logger.error(ex.getMessage());
             }
         }

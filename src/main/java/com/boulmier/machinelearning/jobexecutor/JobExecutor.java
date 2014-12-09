@@ -6,13 +6,22 @@
 package com.boulmier.machinelearning.jobexecutor;
 
 import com.boulmier.machinelearning.jobexecutor.config.JobExecutorConfig;
+import com.boulmier.machinelearning.jobexecutor.consumer.RequestConsumer;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
+import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
 import com.jezhumble.javasysmon.*;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.MissingOptionException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
@@ -69,69 +78,40 @@ public class JobExecutor {
     public static ILogger logger;
 
     public static void main(String[] args) throws ParseException, IOException, InterruptedException {
-        final String QUEUE_NAME = "masters2";
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
+        Options options = defineOptions();
+        sysMon = new JavaSysMon();
+        InetAddress vmscheduler_ip, mongodb_ip;
+        Integer vmscheduler_port = null, mongodb_port;
+        CommandLineParser parser = new BasicParser();
+        try {
+            CommandLine cmd = parser.parse(options, args);
+            if (cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGPORTFIELD)) {
+                vmscheduler_port = Integer.valueOf(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGPORTFIELD));
+            }
+            mongodb_port = (int) (cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGMONGOPORTFIELD) ? cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGMONGOPORTFIELD) : JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_PORT);
+            vmscheduler_ip = InetAddress.getByName(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGIPFIELD));
+            mongodb_ip = InetAddress.getByName(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGMONGOIPFIELD));
+            debugState = cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGDEBUGFIELD);
 
-        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+            logger = LoggerFactory.getLogger();
+            logger.info("Attempt to connect on master @" + vmscheduler_ip + ":" + vmscheduler_port);
 
-        channel.basicQos(1);
+            new RequestConsumer().start();
 
-        QueueingConsumer consumer = new QueueingConsumer(channel);
-        channel.basicConsume(QUEUE_NAME, false, consumer);
+        } catch (MissingOptionException moe) {
 
-        while (true) {
-            QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-            String message = new String(delivery.getBody());
+            HelpFormatter help = new HelpFormatter();
+            help.printHelp(JobExecutor.class.getSimpleName(), options);
 
-            System.out.println(" [x] Received '" + message + "'");
-            Thread.sleep(1000);//want to do some very very long stuff
-            System.out.println(" [x] Done");
+        } catch (UnknownHostException ex) {
 
-            channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+        } finally {
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    logger.info("JobExeutor is shutting down");
+                }
+            });
         }
     }
-
-
-
-/*Options options = defineOptions();
- sysMon = new JavaSysMon();
- InetAddress vmscheduler_ip, mongodb_ip;
- Integer vmscheduler_port = null, mongodb_port;
- CommandLineParser parser = new BasicParser();
- try {
- CommandLine cmd = parser.parse(options, args);
- if (cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGPORTFIELD)) {
- vmscheduler_port = Integer.valueOf(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGPORTFIELD));
- }
- mongodb_port = (int) (cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGMONGOPORTFIELD) ? cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGMONGOPORTFIELD) : JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_PORT);
- vmscheduler_ip = InetAddress.getByName(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGIPFIELD));
- mongodb_ip = InetAddress.getByName(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGMONGOIPFIELD));
- debugState = cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGDEBUGFIELD);
-            
- logger = LoggerFactory.getLogger();
- logger.info("Attempt to connect on master @" + vmscheduler_ip + ":" + vmscheduler_port);
-            
- new RequestConsumer().start();
-            
- } catch (MissingOptionException moe) {
-            
- HelpFormatter help = new HelpFormatter();
- help.printHelp(JobExecutor.class.getSimpleName(), options);
-            
- } catch (UnknownHostException ex) {
-            
- } finally {
- Runtime.getRuntime().addShutdownHook(new Thread() {
- @Override
- public void run() {
- logger.info("JobExeutor is shutting down");
- }
- });
- }
- }
- */
 }

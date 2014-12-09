@@ -29,36 +29,6 @@ public class QueuingService implements Closeable {
             factory.setHost(host);
             connection = factory.newConnection();
             channel = connection.createChannel();
-            channel.queueDeclare(name, true, false, false, null);
-            
-            channel.clearConfirmListeners();
-            channel.addConfirmListener(new ConfirmListener() {
-                //print out which one is acked
-                @Override
-                public void handleAck(long arg0, boolean arg1) throws IOException {
-                    Request r = QueuingExecutionTable.getRequestFromTag(arg0);
-                    QueuingExecutionTable.removeEntry(arg0);
-                    if (arg1) {
-                        Set<Long> s = QueuingExecutionTable.asSetOfTag();
-                        for (Long l : s) {
-                            if (l < arg0) {
-                                QueuingExecutionTable.removeEntry(l);
-                            }
-                        }
-                    }
-                    System.out.println("HEIL");
-                }
-
-                //resend
-                @Override
-                public void handleNack(long arg0, boolean arg1) throws IOException {
-                    Request r = QueuingExecutionTable.getRequestFromTag(arg0);
-                    System.out.println("HEIL");
-                    send(r);
-                }
-
-            });
-            
         } catch (IOException ex) {
             System.err.println("RabbitMQ server is not installed !\nexit...");
             System.exit(0);
@@ -87,7 +57,6 @@ public class QueuingService implements Closeable {
 
     public void send(Request request) throws IOException {
         Gson gson = new GsonBuilder().create();
-        QueuingExecutionTable.newRequest(channel.getNextPublishSeqNo(), (Request) request);
         channel.basicPublish("", name, null, gson.toJson(request, Request.class).getBytes());
     }
 
