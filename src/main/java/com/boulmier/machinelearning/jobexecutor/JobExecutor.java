@@ -60,6 +60,7 @@ public class JobExecutor {
                 .withType(int.class)
                 .hasArg()
                 .create(),
+                decryptKeyOption = OptionBuilder.withArgName("key").withLongOpt("decrypt-key").isRequired(true).hasArg(true).create(),
                 debugOption = OptionBuilder.withArgName(JobExecutorConfig.OPTIONS.CMD.SHORTDEBUGFIELD)
                 .withLongOpt(JobExecutorConfig.OPTIONS.CMD.LONGDEBUGFIELD)
                 .create();
@@ -76,13 +77,14 @@ public class JobExecutor {
     public static JavaSysMon sysMon;
     public static boolean debugState;
     public static ILogger logger;
-
+    public static String decryptKey;
     public static void main(String[] args) throws ParseException, IOException, InterruptedException {
         Options options = defineOptions();
         sysMon = new JavaSysMon();
         InetAddress vmscheduler_ip, mongodb_ip;
         Integer vmscheduler_port = null, mongodb_port;
         CommandLineParser parser = new BasicParser();
+        
         try {
             CommandLine cmd = parser.parse(options, args);
             if (cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGPORTFIELD)) {
@@ -91,6 +93,7 @@ public class JobExecutor {
             mongodb_port = (int) (cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGMONGOPORTFIELD) ? cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGMONGOPORTFIELD) : JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_PORT);
             vmscheduler_ip = InetAddress.getByName(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGIPFIELD));
             mongodb_ip = InetAddress.getByName(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGMONGOIPFIELD));
+            decryptKey = cmd.getOptionValue("decrypt-key");
             debugState = cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGDEBUGFIELD);
 
             logger = LoggerFactory.getLogger();
