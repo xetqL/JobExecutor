@@ -19,44 +19,43 @@ import java.net.InetAddress;
  *
  * @author anthob
  */
-public class RequestConsumer extends Thread{
+public class RequestConsumer extends Thread {
 
-    private static final String QUEUE_NAME = "master", DEFAULT_HOST="localhost";
+    private static final String QUEUE_NAME = "master", DEFAULT_HOST = "localhost";
     private final Connection connection;
     private final Channel channel;
     private final QueueingConsumer consumer;
+
     public RequestConsumer() throws IOException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(DEFAULT_HOST);
         connection = factory.newConnection();
         channel = connection.createChannel();
         channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
         consumer = new QueueingConsumer(channel);
         channel.basicConsume(QUEUE_NAME, false, consumer);
-        
+
     }
 
     public RequestConsumer(InetAddress vmscheduler_ip, Integer port) throws IOException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(vmscheduler_ip.getHostAddress());
-        if(port != null) 
+        if (port != null) {
             factory.setPort(port);
+        }
         connection = factory.newConnection();
         channel = connection.createChannel();
         channel.queueDeclare(QUEUE_NAME, true, false, false, null);
         consumer = new QueueingConsumer(channel);
-        channel.basicConsume(QUEUE_NAME, false, consumer);    
+        channel.basicConsume(QUEUE_NAME, false, consumer);
     }
 
-   
     @Override
     public void run() {
         String message;
         long tag;
         Gson gson = new Gson();
-        int i = 1;
-        while(true){
+        while (true) {
             try {
                 QueueingConsumer.Delivery delivery = consumer.nextDelivery();
                 message = new String(delivery.getBody());
@@ -64,11 +63,10 @@ public class RequestConsumer extends Thread{
                 gson.fromJson(message, Request.class);
                 channel.basicAck(tag, false);
                 System.err.println(message);
-                i++;
             } catch (InterruptedException | IOException ex) {
                 JobExecutor.logger.error(ex.getMessage());
             }
         }
     }
-    
+
 }

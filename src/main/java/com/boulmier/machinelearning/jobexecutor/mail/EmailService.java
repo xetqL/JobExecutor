@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.boulmier.machinelearning.jobexecutor.mail;
 
 import com.boulmier.machinelearning.jobexecutor.JobExecutor;
@@ -15,7 +10,7 @@ import javax.mail.Message;
 import org.codemonkey.simplejavamail.*;
 
 public class EmailService {
-
+    
     private static final String smtp_server = "smtp.gmail.com";
     private static String user, password;
     private static final int port = 465;
@@ -26,7 +21,7 @@ public class EmailService {
      * @param clientEmail
      */
     public static void sendWith(File result, String clientEmail) {
-        Credential cred = CredentialProvider.provideCredential(JobExecutor.decryptKey);
+        Credential cred = CredentialProvider.provideCredential(JobExecutor.decryptKey, CredentialProvider.CredentialSource.EMAIL);
         Email e = new Email();
         DataSource ds = new FileDataSource(result);
         e.setFromAddress("hepiacloud", cred.getUser());
@@ -37,4 +32,3 @@ public class EmailService {
         new Mailer(smtp_server,port,cred.getUser(), cred.getPassword(),  TransportStrategy.SMTP_SSL).sendMail(e);
     }
 }
-

@@ -7,6 +7,8 @@
 package com.boulmier.machinelearning.jobexecutor.job;
 
 import com.boulmier.machinelearning.jobexecutor.JobExecutor;
+import com.boulmier.machinelearning.jobexecutor.consumer.Computer;
+import com.boulmier.machinelearning.jobexecutor.consumer.Computer.ComputeProperties.PropertieName;
 import com.boulmier.machinelearning.jobexecutor.consumer.SenderComputer;
 import com.boulmier.machinelearning.jobexecutor.consumer.StorageComputer;
 import java.io.ByteArrayOutputStream;
@@ -54,7 +56,9 @@ public abstract class Job {
             public void run() {
                 try {
                     handler.waitFor();
-                    new SenderComputer( new StorageComputer( out.toString() ) ).compute();
+                    Computer.ComputeProperties properties = new Computer.ComputeProperties();
+                    properties.addProperties(PropertieName.FILENAME, "");
+                    new SenderComputer( new StorageComputer( out.toString(), properties ) ).compute();
                     JobExecutor.logger.info("Job is complete " + jobid);
                 } catch (InterruptedException ex) {
                     exec.getWatchdog().destroyProcess();

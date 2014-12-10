@@ -6,9 +6,7 @@
 package com.boulmier.machinelearning.jobexecutor.logging;
 
 import com.boulmier.machinelearning.jobexecutor.JobExecutor;
-import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 

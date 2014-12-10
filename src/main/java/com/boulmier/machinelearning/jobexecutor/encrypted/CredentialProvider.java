@@ -5,17 +5,27 @@
  */
 package com.boulmier.machinelearning.jobexecutor.encrypted;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  *
  * @author anthob
  */
 public class CredentialProvider{
-    private static final String 
-            encryptedPassowrd = "4UMQhLBiJUcdb60kv2eqdA==",
-            encryptedUser     = "l5ANMHcdBgxd5iwkLhutV8L+Cxg+Y/qhJO+1fhsVzFg=";
-    public static Credential provideCredential(String key){
-        AES.setKey(key);
-        return new Credential(AES.decrypt(encryptedUser), AES.decrypt(encryptedPassowrd));
+    public static enum CredentialSource{
+        EMAIL, MONGODB, SWIFT
+    }
+    private static final Map<CredentialSource, EncryptedCredential> credentialDB = new HashMap<>();
+    
+    static {
+        credentialDB.put( CredentialSource.EMAIL, new EncryptedCredential( "l5ANMHcdBgxd5iwkLhutV8L+Cxg+Y/qhJO+1fhsVzFg=", "4UMQhLBiJUcdb60kv2eqdA==") );
+    }
+
+    public static Credential provideCredential(String key, CredentialSource source){
+        AES aes = new AES(key);
+        EncryptedCredential encryptedCred = credentialDB.get(source).withDecrypter(aes);
+        return encryptedCred.returnAsCredential();
     }
 }

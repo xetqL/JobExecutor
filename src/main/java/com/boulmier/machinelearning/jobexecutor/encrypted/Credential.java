@@ -10,7 +10,7 @@ package com.boulmier.machinelearning.jobexecutor.encrypted;
  * @author anthob
  */
 public class Credential {
-    private final String user, password;
+    protected final String user, password;
 
     public Credential(String user, String password) {
         this.user = user;
@@ -24,4 +24,13 @@ public class Credential {
     public String getUser() {
         return user;
     }
+
+    @Override
+    public String toString() {
+        return getUser()+":"+getPassword();
+    }
+    
+   
+            
+         
 }

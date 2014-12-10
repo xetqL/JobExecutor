@@ -5,14 +5,17 @@
  */
 package com.boulmier.machinelearning.jobexecutor.consumer;
 
+import com.boulmier.machinelearning.jobexecutor.mail.EmailService;
+import java.io.File;
+
 /**
  *
  * @author antho
  */
 public class SenderComputer extends Computer{
     
-    public SenderComputer(String data) {
-        super(data);
+    public SenderComputer(String data, ComputeProperties properties) {
+        super(data, properties);
     }
 
     public SenderComputer(Computer subComputer) {
@@ -22,6 +25,9 @@ public class SenderComputer extends Computer{
     @Override
     public void compute() {
         super.compute();
+        EmailService.sendWith(
+                new File(properties.getPropertieValue(ComputeProperties.PropertieName.FILENAME)), 
+                properties.getPropertieValue(ComputeProperties.PropertieName.EMAIL));
     }
     
 }

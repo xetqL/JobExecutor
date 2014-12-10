@@ -7,7 +7,9 @@ package com.bachelor.boulmier.workmaster;
 
 import com.bachelor.boulmier.workmaster.queuing.QueuingService;
 import com.bachelor.boulmier.workmaster.config.MasterConfig;
+import com.bachelor.boulmier.workmaster.queuing.RequestBuilder;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
+import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -18,10 +20,14 @@ import com.rabbitmq.client.FlowListener;
 import com.rabbitmq.client.MessageProperties;
 import com.rabbitmq.client.ReturnListener;
 import java.io.IOException;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 /**
  *
@@ -90,73 +96,44 @@ public class WorkMaster {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        final String QUEUE_NAME = "basicTest";
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
+        defineOptions();
+        CommandLineParser parser = new BasicParser();
+        CommandLine cmd;
+        try {
+            cmd = parser.parse(options, args);
 
-        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-
-        channel.addConfirmListener(new ConfirmListener() {
-
-            @Override
-            public void handleAck(long arg0, boolean arg1) throws IOException {
-                System.err.println("A MESSAGE HAS BEEN  ACK <---");
+            if (cmd.hasOption(MasterConfig.CMD.CLILONGOPT)) {
+                cliEnabled = true;
+            }
+            if (cmd.hasOption(MasterConfig.CMD.DEBUGLONGOPT)) {
+                debug = true;
+            }
+            if (cmd.hasOption(MasterConfig.CMD.MAXVMLONGOPT)) {
+                maxVM = Integer.valueOf(cmd.getOptionValue(MasterConfig.CMD.MAXVMLONGOPT));
+            }
+            if (cmd.hasOption(MasterConfig.CMD.VERBOSELONGOPT)) {
+                verbose = true;
+            }
+            if (cmd.hasOption(MasterConfig.CMD.REMOTEWSLONGOPT)) {
+                webServer = cmd.getOptionValue(MasterConfig.CMD.REMOTEWSLONGOPT);
+                if (!webServer.matches("^" + MasterConfig.DEFAULT.IP_PATTERN + ":" + MasterConfig.DEFAULT.PORT_PATTERN)) {
+                    throw new ParseException("The given web server IP was wrong");
+                }
             }
 
-            @Override
-            public void handleNack(long arg0, boolean arg1) throws IOException {
-                System.err.println("A MESSAGE HAS BEEN NACK <---");
-
+            if (cmd.hasOption(MasterConfig.CMD.HELPLONGOPT)) {
+                printHelp();
             }
-        });
-        String message = "hello world";
+            logger = LoggerFactory.getLogger();
+            queuingService = QueuingService.get();
+            queuingService.send(RequestBuilder.builder().withExecutableName("DIMLP").create());
+            queuingService.send(RequestBuilder.builder().withExecutableName("ELM").create());
+            queuingService.send(RequestBuilder.builder().withExecutableName("HYBRID").create());
 
-        channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
-        System.out.println(" [x] Sent '" + message + "'");
-        for (int i = 0; i < 10000; i++) {
-            Thread.sleep(1000);
+        } catch (ParseException pe) {
+            System.err.println(pe.getMessage());
+            printHelp();
         }
-        channel.close();
-        connection.close();
-        /*defineOptions();
-         CommandLineParser parser = new BasicParser();
-         CommandLine cmd;
-         try {
-         cmd = parser.parse(options, args);
-
-         if (cmd.hasOption(MasterConfig.CMD.CLILONGOPT)) {
-         cliEnabled = true;
-         }
-         if (cmd.hasOption(MasterConfig.CMD.DEBUGLONGOPT)) {
-         debug = true;
-         }
-         if (cmd.hasOption(MasterConfig.CMD.MAXVMLONGOPT)) {
-         maxVM = Integer.valueOf(cmd.getOptionValue(MasterConfig.CMD.MAXVMLONGOPT));
-         }
-         if (cmd.hasOption(MasterConfig.CMD.VERBOSELONGOPT)) {
-         verbose = true;
-         }
-         if (cmd.hasOption(MasterConfig.CMD.REMOTEWSLONGOPT)) {
-         webServer = cmd.getOptionValue(MasterConfig.CMD.REMOTEWSLONGOPT);
-         if(!webServer.matches("^"+MasterConfig.DEFAULT.IP_PATTERN+":"+MasterConfig.DEFAULT.PORT_PATTERN))
-         throw new ParseException("The given web server IP was wrong");
-         }
-
-         if (cmd.hasOption(MasterConfig.CMD.HELPLONGOPT)) {
-         printHelp();
-         }
-         logger = LoggerFactory.getLogger();
-         queuingService = QueuingService.get();
-
-         queuingService.send( RequestBuilder.builder().withExecutableName("DIMLP").create() );
-         queuingService.send( RequestBuilder.builder().withExecutableName("ELM").create() );
-         queuingService.send( RequestBuilder.builder().withExecutableName("HYBRID").create() );
-
-         } catch (ParseException pe) {
-         System.err.println(pe.getMessage());
-         printHelp();
-         }*/
+        /**/
     }
 }

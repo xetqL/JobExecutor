@@ -7,6 +7,7 @@ package com.boulmier.machinelearning.jobexecutor;
 
 import com.boulmier.machinelearning.jobexecutor.config.JobExecutorConfig;
 import com.boulmier.machinelearning.jobexecutor.consumer.RequestConsumer;
+import com.boulmier.machinelearning.jobexecutor.encrypted.CredentialProvider;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
 import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
 import com.jezhumble.javasysmon.*;
@@ -70,7 +71,7 @@ public class JobExecutor {
         softwareOptions.addOption(mongoIpOption);
         softwareOptions.addOption(debugOption);
         softwareOptions.addOption(mongoPortOption);
-
+        softwareOptions.addOption(decryptKeyOption);
         return softwareOptions;
     }
 
@@ -98,8 +99,8 @@ public class JobExecutor {
 
             logger = LoggerFactory.getLogger();
             logger.info("Attempt to connect on master @" + vmscheduler_ip + ":" + vmscheduler_port);
-
-            new RequestConsumer().start();
+            
+            //new RequestConsumer().start();
 
         } catch (MissingOptionException moe) {
 

@@ -22,10 +22,14 @@ import org.apache.commons.codec.binary.Base64;
 
 public class AES {
 
-    private static SecretKeySpec secretKey;
-    private static byte[] key;
+    private SecretKeySpec secretKey;
+    private byte[] key;
+
+    public AES(String key) {
+        this.setKey(key);
+    }
     
-    public static void setKey(String myKey) {
+    private final void setKey(String myKey) {
 
         MessageDigest sha = null;
         try {
@@ -40,7 +44,7 @@ public class AES {
 
     }
 
-    private static String encrypt(String strToEncrypt) {
+    private String encrypt(String strToEncrypt) {
         try {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
 
@@ -56,7 +60,7 @@ public class AES {
 
     }
 
-    public static String decrypt(String strToDecrypt) {
+    public String decrypt(String strToDecrypt) {
         try {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
 

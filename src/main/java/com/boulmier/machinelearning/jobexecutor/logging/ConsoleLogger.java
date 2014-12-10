@@ -17,9 +17,7 @@ import org.apache.log4j.varia.LevelRangeFilter;
 public class ConsoleLogger extends ILogger{
 
     private ConsoleLogger(ConsoleAppender cApp){
-        
         super( cApp );
-        
     }
     
     public static ConsoleLogger getLoggerInstance(){
