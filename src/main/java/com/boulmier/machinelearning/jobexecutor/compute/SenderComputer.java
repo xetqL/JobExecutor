@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.boulmier.machinelearning.jobexecutor.consumer;
+package com.boulmier.machinelearning.jobexecutor.compute;
 
 import com.boulmier.machinelearning.jobexecutor.mail.EmailService;
 import java.io.File;

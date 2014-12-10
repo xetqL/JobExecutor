@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.boulmier.machinelearning.jobexecutor.consumer;
+package com.boulmier.machinelearning.jobexecutor.compute;
 
-import com.boulmier.machinelearning.jobexecutor.consumer.Computer.ComputeProperties.PropertieName;
+import com.boulmier.machinelearning.jobexecutor.compute.Computer.ComputeProperties.PropertieName;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;

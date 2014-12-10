@@ -7,10 +7,10 @@
 package com.boulmier.machinelearning.jobexecutor.job;
 
 import com.boulmier.machinelearning.jobexecutor.JobExecutor;
-import com.boulmier.machinelearning.jobexecutor.consumer.Computer;
-import com.boulmier.machinelearning.jobexecutor.consumer.Computer.ComputeProperties.PropertieName;
-import com.boulmier.machinelearning.jobexecutor.consumer.SenderComputer;
-import com.boulmier.machinelearning.jobexecutor.consumer.StorageComputer;
+import com.boulmier.machinelearning.jobexecutor.compute.Computer;
+import com.boulmier.machinelearning.jobexecutor.compute.Computer.ComputeProperties.PropertieName;
+import com.boulmier.machinelearning.jobexecutor.compute.SenderComputer;
+import com.boulmier.machinelearning.jobexecutor.compute.StorageComputer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
