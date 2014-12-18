@@ -6,7 +6,7 @@
 package com.boulmier.machinelearning.jobexecutor.job.mlp;
 
 import com.boulmier.machinelearning.jobexecutor.job.Job;
-import java.util.HashMap;
+import com.boulmier.machinelearning.jobexecutor.request.Request;
 
 /**
  *
@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class ELM extends Job {
 
-    public ELM(HashMap<String, String> params, String id) {
+    public ELM(Request params, String id) {
         super(params, id);
     }
 }

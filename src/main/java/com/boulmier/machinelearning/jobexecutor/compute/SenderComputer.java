@@ -26,8 +26,8 @@ public class SenderComputer extends Computer{
     public void compute() {
         super.compute();
         EmailService.sendWith(
-                new File(properties.getPropertieValue(ComputeProperties.PropertieName.FILENAME)), 
-                properties.getPropertieValue(ComputeProperties.PropertieName.EMAIL));
+                new File(properties.getPropertyValue(ComputeProperties.PropertyName.FILENAME)), 
+                properties.getPropertyValue(ComputeProperties.PropertyName.EMAIL));
     }
     
 }

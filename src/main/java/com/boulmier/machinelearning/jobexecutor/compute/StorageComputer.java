@@ -5,7 +5,7 @@
  */
 package com.boulmier.machinelearning.jobexecutor.compute;
 
-import com.boulmier.machinelearning.jobexecutor.compute.Computer.ComputeProperties.PropertieName;
+import com.boulmier.machinelearning.jobexecutor.compute.Computer.ComputeProperties.PropertyName;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,7 +29,11 @@ public class StorageComputer extends Computer {
     @Override
     public void compute() {
         super.compute();
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(properties.getPropertieValue(PropertieName.FILENAME)), properties.getPropertieValue(PropertieName.ENCODING)))) {
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(
+                        properties.getPropertyValue(PropertyName.FILENAME)), 
+                        properties.getPropertyValue(PropertyName.ENCODING)))
+                ) {
             writer.write(data);
         } catch (IOException ex) {}
     }

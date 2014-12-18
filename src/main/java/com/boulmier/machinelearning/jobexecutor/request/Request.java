@@ -1,60 +1,78 @@
 package com.boulmier.machinelearning.jobexecutor.request;
 
-public class Request {
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-    private String executableName,
-            numberOfHiddenNeurons,
-            numberOfInputNeurons,
-            trainingSetURI,
-            testingSetURI,
-            numberOfEpochs;
+public class Request implements Iterable<Map.Entry<RequestProperty,String>>{
 
-    public String getNumberOfEpochs() {
-        return numberOfEpochs;
-    }
+    private final HashMap<RequestProperty, String> content = new HashMap<>();
 
     public void setNumberOfEpochs(String numberOfEpochs) {
-        this.numberOfEpochs = numberOfEpochs;
+        content.put(RequestProperty.NUMBER_OF_EPOCHS, numberOfEpochs);
     }
 
     public void setExecutableName(String executableName) {
-        this.executableName = executableName;
+        content.put(RequestProperty.EXECUTABLE_NAME, executableName);
     }
 
     public void setNumberOfHiddenNeurons(String numberOfHiddenNeurons) {
-        this.numberOfHiddenNeurons = numberOfHiddenNeurons;
+        content.put(RequestProperty.NUMBER_OF_HIDDEN_NEURONS, numberOfHiddenNeurons);
     }
 
     public void setNumberOfInputNeurons(String numberOfInputNeurons) {
-        this.numberOfInputNeurons = numberOfInputNeurons;
+        content.put(RequestProperty.NUMBER_OF_INPUT_NEURONS, numberOfInputNeurons);
     }
 
     public void setTestingSetURI(String testingSetURI) {
-        this.testingSetURI = testingSetURI;
+        content.put(RequestProperty.TESTING_SET_URI, testingSetURI);
     }
 
     public void setTrainingSetURI(String trainingSetURI) {
-        this.trainingSetURI = trainingSetURI;
+        content.put(RequestProperty.TRAINING_SET_URI, trainingSetURI);
     }
 
+    public void setJobName(String jobName){
+        content.put(RequestProperty.JOB_NAME, jobName);
+    }
+    
+    public void setJobIdentifier(String jobIdentifier){
+        content.put(RequestProperty.JOB_IDENTIFIER, jobIdentifier);
+    }
+    
     public String getExecutableName() {
-        return executableName;
+        return content.get(RequestProperty.EXECUTABLE_NAME);
     }
 
     public String getNumberOfHiddenNeurons() {
-        return numberOfHiddenNeurons;
+        return content.get(RequestProperty.NUMBER_OF_HIDDEN_NEURONS);
     }
 
     public String getNumberOfInputNeurons() {
-        return numberOfInputNeurons;
+        return content.get(RequestProperty.NUMBER_OF_INPUT_NEURONS);
     }
 
     public String getTestingSetURI() {
-        return testingSetURI;
+        return content.get(RequestProperty.TESTING_SET_URI);
     }
 
     public String getTrainingSetURI() {
-        return trainingSetURI;
+        return content.get(RequestProperty.TRAINING_SET_URI);
     }
 
+    public String getNumberOfEpochs() {
+        return content.get(RequestProperty.NUMBER_OF_EPOCHS);
+    }
+
+    public String getJobName(){
+        return content.get(RequestProperty.JOB_NAME);
+    }
+    
+    public String getJobIdentifier(){
+        return content.get(RequestProperty.JOB_IDENTIFIER);
+    }
+    @Override
+    public Iterator<Map.Entry<RequestProperty, String>> iterator() {
+        return content.entrySet().iterator();
+    }
 }

@@ -39,7 +39,7 @@ public abstract class Computer {
     }
 
     public static class ComputeProperties {
-        public static enum PropertieName {
+        public static enum PropertyName {
              
             FILENAME,  //used in storage computer
             EMAIL,     //used in sender computer
@@ -49,18 +49,18 @@ public abstract class Computer {
             //...
             
         }
-        private final HashMap<PropertieName,String> dbproperties = new HashMap<>();
+        private final HashMap<PropertyName,String> dbproperties = new HashMap<>();
         
         /**
          * add a new properties (erase the previous one)
          * @param id
          * @param value 
          */
-        public void addProperties(PropertieName id, String value){
+        public void addProperties(PropertyName id, String value){
             dbproperties.put(id, value);
         }
         
-        public String getPropertieValue(PropertieName id){
+        public String getPropertyValue(PropertyName id){
             switch(id){
                 case ENCODING:
                     return dbproperties.getOrDefault(id, "UTF-8");
