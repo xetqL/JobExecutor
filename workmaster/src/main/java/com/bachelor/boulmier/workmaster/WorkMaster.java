@@ -7,9 +7,11 @@ package com.bachelor.boulmier.workmaster;
 
 import com.bachelor.boulmier.workmaster.queuing.QueuingService;
 import com.bachelor.boulmier.workmaster.config.MasterConfig;
-import com.boulmier.machinelearning.request.RequestBuilder;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
 import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
+import com.boulmier.machinelearning.request.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jezhumble.javasysmon.JavaSysMon;
 import java.io.IOException;
 import org.apache.commons.cli.BasicParser;
@@ -32,7 +34,6 @@ public class WorkMaster {
     @SuppressWarnings("static-access")
     private static void defineOptions() {
         options = new Options();
-
         Option maxVMOption = OptionBuilder
                 .withLongOpt(MasterConfig.CMD.MAXVMLONGOPT)
                 .withArgName(MasterConfig.CMD.MAXVMARG)
@@ -116,14 +117,20 @@ public class WorkMaster {
             if (cmd.hasOption(MasterConfig.CMD.HELPLONGOPT)) {
                 printHelp();
             }
+
             logger = LoggerFactory.getLogger();
-            queuingService = QueuingService.get();
-            queuingService.send(RequestBuilder.builder().withExecutableName("DIMLP").create());
+
+            QueuingService.get().send(
+                    RequestBuilder.builder()
+                    .withExecutableName(ExecutableName.SLEEP)
+                    .with(RequestProperty.ARGS, "1000").create()
+            );
+            Thread.sleep(3000);
 
         } catch (ParseException pe) {
             logger.error(pe.getMessage());
             printHelp();
         }
-        
+
     }
 }

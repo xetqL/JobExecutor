@@ -9,6 +9,7 @@ import com.boulmier.machinelearning.jobexecutor.JobExecutor;
 import com.boulmier.machinelearning.jobexecutor.compute.Computer;
 import com.boulmier.machinelearning.jobexecutor.compute.SenderComputer;
 import com.boulmier.machinelearning.jobexecutor.compute.StorageComputer;
+import com.boulmier.machinelearning.request.Property;
 import com.boulmier.machinelearning.request.Request;
 import com.boulmier.machinelearning.request.RequestProperty;
 import java.io.ByteArrayOutputStream;
@@ -71,12 +72,12 @@ public abstract class Job {
 
     private CommandLine generateCommandLine(Request req) {
         StringBuilder argumentBuilder;
-        this.executableName = req.getExecutableName();
+        this.executableName = req.getExcutableNameAsString();
         this.cl = new CommandLine(executableName);
-        for (Map.Entry<RequestProperty, String> entry : req) {
-            if (!entry.getKey().equalsOpt(RequestProperty.NULL)) {
+        for (Map.Entry<Property<String,String>, String> entry : req) {
+            if (RequestProperty.isNull(entry.getKey())) {
                 argumentBuilder = new StringBuilder()
-                        .append(entry.getKey())
+                        .append(entry.getKey().getB())
                         .append(" ")
                         .append(entry.getValue());
                 this.cl.addArgument(argumentBuilder.toString());

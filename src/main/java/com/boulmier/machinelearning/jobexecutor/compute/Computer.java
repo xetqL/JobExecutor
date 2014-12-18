@@ -5,6 +5,7 @@
  */
 package com.boulmier.machinelearning.jobexecutor.compute;
 
+import com.boulmier.machinelearning.request.Property;
 import com.boulmier.machinelearning.request.Request;
 import com.boulmier.machinelearning.request.RequestProperty;
 import java.util.HashMap;
@@ -47,9 +48,9 @@ public abstract class Computer {
 
     public static class ComputeProperties {
 
-        private final Map<RequestProperty, String> dbproperties;
+        private final Map<Property, String> dbproperties;
 
-        private ComputeProperties(Map<RequestProperty,String> setup) {
+        private ComputeProperties(Map<Property,String> setup) {
             dbproperties = setup;
         }
 
@@ -57,7 +58,7 @@ public abstract class Computer {
             return new ComputeProperties(req.extractSetup());
         }
 
-        public String getProperty(RequestProperty id) {
+        public String getProperty(Property id) {
             assert (dbproperties.containsKey(id));
             return dbproperties.get(id);
         }

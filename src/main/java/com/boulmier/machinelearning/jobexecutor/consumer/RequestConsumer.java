@@ -6,14 +6,21 @@
 package com.boulmier.machinelearning.jobexecutor.consumer;
 
 import com.boulmier.machinelearning.jobexecutor.JobExecutor;
-import com.boulmier.machinelearning.request.Request;
+import com.boulmier.machinelearning.request.*;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
+import com.google.gson.reflect.TypeToken;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.InetAddress;
+import java.util.EnumMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -49,21 +56,36 @@ public class RequestConsumer extends Thread {
         channel.basicConsume(QUEUE_NAME, false, consumer);
     }
 
+    static class EnumMapInstanceCreator<K extends Enum<K>, V> implements
+            InstanceCreator<EnumMap<K, V>> {
+
+        private final Class<K> enumClazz;
+
+        public EnumMapInstanceCreator(final Class<K> enumClazz) {
+            super();
+            this.enumClazz = enumClazz;
+        }
+
+        @Override
+        public EnumMap<K, V> createInstance(final Type type) {
+            return new EnumMap<>(enumClazz);
+        }
+    }
+
     @Override
     public void run() {
         String message;
-        long tag;
-        Gson gson = new Gson();
         while (true) {
             try {
                 QueueingConsumer.Delivery delivery = consumer.nextDelivery();
                 message = new String(delivery.getBody());
-                tag = delivery.getEnvelope().getDeliveryTag();
-                gson.fromJson(message, Request.class);
-                channel.basicAck(tag, false);
-                System.err.println(message);
-            } catch (InterruptedException | IOException ex) {
+                Request r = Request.fromString(message);
+                channel.basicAck(delivery.getEnvelope().getDeliveryTag(), true);
+                System.out.println(r);
+            } catch (InterruptedException ex) {
                 JobExecutor.logger.error(ex.getMessage());
+            } catch (IOException ex) {
+                Logger.getLogger(RequestConsumer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

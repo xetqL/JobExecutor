@@ -102,7 +102,7 @@ public class JobExecutor {
             logger = LoggerFactory.getLogger();
             logger.info("Attempt to connect on master @" + vmscheduler_ip + ":" + vmscheduler_port);
             
-            //new RequestConsumer().start();
+            new RequestConsumer().start();
 
         } catch (MissingOptionException moe) {
             logger.error(moe.getMissingOptions()+" are missing");

@@ -10,48 +10,70 @@ package com.boulmier.machinelearning.request;
  * @author anthob
  */
 public class RequestBuilder {
+
     private final Request r;
 
     private RequestBuilder(Request r) {
         this.r = r;
     }
-       
-    public static RequestBuilder builder(){
+
+    public static RequestBuilder builder() {
         return new RequestBuilder(new Request());
     }
-    
-    public RequestBuilder withExecutableName(String name){
+
+    public RequestBuilder withExecutableName(ExecutableName name) {
         r.setExecutableName(name);
         return this;
     }
-    
-    public RequestBuilder withNumberOfHiddenNeurons(int n){
+
+    public RequestBuilder withNumberOfHiddenNeurons(int n) {
         r.setNumberOfHiddenNeurons(String.valueOf(n));
         return this;
     }
-    
-    public RequestBuilder withTrainingSetURI(String uri){
+
+    public RequestBuilder withTrainingSetURI(String uri) {
         r.setTrainingSetURI(uri);
         return this;
     }
-    
-    public RequestBuilder withTestingSetURI(String uri){
+
+    public RequestBuilder withTestingSetURI(String uri) {
         r.setTestingSetURI(uri);
         return this;
     }
-    
-    public RequestBuilder withNumberOfInputNeurons(int n){
+
+    public RequestBuilder withNumberOfInputNeurons(int n) {
         r.setNumberOfInputNeurons(String.valueOf(n));
         return this;
     }
-    
-    public RequestBuilder withNumberOfEpochs(int n){
+
+    public RequestBuilder withNumberOfEpochs(int n) {
         r.setNumberOfEpochs(String.valueOf(n));
         return this;
     }
-    
-    public Request create(){
+
+    private void addArg(String arg) {
+        String args = r.getProperty(RequestProperty.ARGS);
+        boolean first = args == null;
+        args = args == null? " ":args;
+        StringBuilder actualArgList = new StringBuilder(args);
+        if (first) {
+            r.setProperty(RequestProperty.ARGS, arg);
+        } else {
+            r.setProperty(RequestProperty.ARGS, actualArgList.append(" ").append(arg).toString());
+        }
+    }
+
+    public RequestBuilder with(Property property, String as) {
+        if (RequestProperty.ARGS == property) {
+            this.addArg(as);
+        } else {
+            r.setProperty(property, as);
+        }
+        return this;
+    }
+
+    public Request create() {
         return r;
     }
-    
+
 }
