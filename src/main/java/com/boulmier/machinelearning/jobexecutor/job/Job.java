@@ -7,14 +7,12 @@ package com.boulmier.machinelearning.jobexecutor.job;
 
 import com.boulmier.machinelearning.jobexecutor.JobExecutor;
 import com.boulmier.machinelearning.jobexecutor.compute.Computer;
-import com.boulmier.machinelearning.jobexecutor.compute.Computer.ComputeProperties.PropertyName;
 import com.boulmier.machinelearning.jobexecutor.compute.SenderComputer;
 import com.boulmier.machinelearning.jobexecutor.compute.StorageComputer;
-import com.boulmier.machinelearning.jobexecutor.request.Request;
-import com.boulmier.machinelearning.jobexecutor.request.RequestProperty;
+import com.boulmier.machinelearning.request.Request;
+import com.boulmier.machinelearning.request.RequestProperty;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
@@ -58,8 +56,7 @@ public abstract class Job {
             public void run() {
                 try {
                     handler.waitFor();
-                    Computer.ComputeProperties properties = new Computer.ComputeProperties();
-                    properties.addProperties(PropertyName.FILENAME, req.getExecutableName());
+                    Computer.ComputeProperties properties = Computer.ComputeProperties.buildFromRequest(req);
                     new SenderComputer(new StorageComputer(out.toString(), properties)).compute();
                     JobExecutor.logger.info("Job is complete " + jobid);
                 } catch (InterruptedException ex) {

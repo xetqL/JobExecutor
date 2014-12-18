@@ -6,7 +6,7 @@
 package com.boulmier.machinelearning.jobexecutor.consumer;
 
 import com.boulmier.machinelearning.jobexecutor.JobExecutor;
-import com.boulmier.machinelearning.jobexecutor.request.Request;
+import com.boulmier.machinelearning.request.Request;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -34,7 +34,6 @@ public class RequestConsumer extends Thread {
         channel.queueDeclare(QUEUE_NAME, true, false, false, null);
         consumer = new QueueingConsumer(channel);
         channel.basicConsume(QUEUE_NAME, false, consumer);
-
     }
 
     public RequestConsumer(InetAddress vmscheduler_ip, Integer port) throws IOException {

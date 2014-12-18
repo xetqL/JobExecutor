@@ -82,8 +82,8 @@ public class JobExecutor {
     public static void main(String[] args) throws ParseException, IOException, InterruptedException {
         Options options = defineOptions();
         sysMon = new JavaSysMon();
-        InetAddress vmscheduler_ip, mongodb_ip;
-        Integer vmscheduler_port = null, mongodb_port;
+        InetAddress vmscheduler_ip = null, mongodb_ip = null;
+        Integer vmscheduler_port = null, mongodb_port = null;
         CommandLineParser parser = new BasicParser();
         
         try {
@@ -92,8 +92,10 @@ public class JobExecutor {
                 vmscheduler_port = Integer.valueOf(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGPORTFIELD));
             }
             mongodb_port = (int) (cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGMONGOPORTFIELD) ? cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGMONGOPORTFIELD) : JobExecutorConfig.OPTIONS.LOGGING.MONGO_DEFAULT_PORT);
-            vmscheduler_ip = InetAddress.getByName(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGIPFIELD));
             mongodb_ip = InetAddress.getByName(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGMONGOIPFIELD));
+            
+            vmscheduler_ip = InetAddress.getByName(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGIPFIELD));
+            
             decryptKey = cmd.getOptionValue("decrypt-key");
             debugState = cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGDEBUGFIELD);
 
@@ -103,12 +105,12 @@ public class JobExecutor {
             //new RequestConsumer().start();
 
         } catch (MissingOptionException moe) {
-
+            logger.error(moe.getMissingOptions()+" are missing");
             HelpFormatter help = new HelpFormatter();
             help.printHelp(JobExecutor.class.getSimpleName(), options);
 
         } catch (UnknownHostException ex) {
-
+            logger.error( ex.getMessage() );
         } finally {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override

@@ -1,5 +1,6 @@
 package com.bachelor.boulmier.workmaster.queuing;
 
+import com.boulmier.machinelearning.request.Request;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rabbitmq.client.Channel;

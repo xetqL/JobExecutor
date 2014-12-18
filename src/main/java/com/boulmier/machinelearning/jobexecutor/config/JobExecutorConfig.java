@@ -48,18 +48,12 @@ public interface JobExecutorConfig {
                     DEBUGDESCRIPTION = "Enable the debug mode";
         }
 
-        public abstract class LOGGING {
+        public interface LOGGING {
 
             public static String MONGO_DEFAULT_IP = "192.168.1.3";
             public static int MONGO_DEFAULT_PORT = 27017;
             public static String MONGO_DEFAULT_DATABASE = "NeuralNetworkSystem";
             public static String MONGO_DEFAULT_COLLECTION = "log";
-            public static final Map<Integer, String> priority = new TreeMap<>();
-
-            static {
-                priority.put(0, "mongodb");
-                priority.put(1, "intern");
-            }
 
         }
     }

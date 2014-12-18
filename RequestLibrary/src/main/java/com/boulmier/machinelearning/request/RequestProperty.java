@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.boulmier.machinelearning.jobexecutor.request;
+package com.boulmier.machinelearning.request;
 
 /**
- *
+ * Every property with null value should be for Request init
  * @author anthob
  */
 public enum RequestProperty {
@@ -14,11 +14,13 @@ public enum RequestProperty {
     EXECUTABLE_NAME("null"),
     JOB_NAME("null"),
     JOB_IDENTIFIER("null"),
+    CLIENT_EMAIL("null"),
     NUMBER_OF_HIDDEN_NEURONS("-h"),
     NUMBER_OF_INPUT_NEURONS("-i"),
     TRAINING_SET_URI("-tr"),
     TESTING_SET_URI("-te"),
     NUMBER_OF_EPOCHS("-e");
+    
     private final String cl_opt;
     public static final String NULL = "null";
     private RequestProperty(String cl_opt) {
@@ -35,5 +37,4 @@ public enum RequestProperty {
             return ((String) value).equals(cl_opt);
         return false;
     }
-    
 }

@@ -7,18 +7,10 @@ package com.bachelor.boulmier.workmaster;
 
 import com.bachelor.boulmier.workmaster.queuing.QueuingService;
 import com.bachelor.boulmier.workmaster.config.MasterConfig;
-import com.bachelor.boulmier.workmaster.queuing.RequestBuilder;
+import com.boulmier.machinelearning.request.RequestBuilder;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
 import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
 import com.jezhumble.javasysmon.JavaSysMon;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.ConfirmListener;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.FlowListener;
-import com.rabbitmq.client.MessageProperties;
-import com.rabbitmq.client.ReturnListener;
 import java.io.IOException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -117,7 +109,7 @@ public class WorkMaster {
             if (cmd.hasOption(MasterConfig.CMD.REMOTEWSLONGOPT)) {
                 webServer = cmd.getOptionValue(MasterConfig.CMD.REMOTEWSLONGOPT);
                 if (!webServer.matches("^" + MasterConfig.DEFAULT.IP_PATTERN + ":" + MasterConfig.DEFAULT.PORT_PATTERN)) {
-                    throw new ParseException("The given web server IP was wrong");
+                    throw new ParseException("Given IP:PORT does not match pattern");
                 }
             }
 
@@ -127,13 +119,11 @@ public class WorkMaster {
             logger = LoggerFactory.getLogger();
             queuingService = QueuingService.get();
             queuingService.send(RequestBuilder.builder().withExecutableName("DIMLP").create());
-            queuingService.send(RequestBuilder.builder().withExecutableName("ELM").create());
-            queuingService.send(RequestBuilder.builder().withExecutableName("HYBRID").create());
 
         } catch (ParseException pe) {
-            System.err.println(pe.getMessage());
+            logger.error(pe.getMessage());
             printHelp();
         }
-        /**/
+        
     }
 }

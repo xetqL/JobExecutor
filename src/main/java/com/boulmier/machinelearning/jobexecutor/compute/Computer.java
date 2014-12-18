@@ -5,16 +5,21 @@
  */
 package com.boulmier.machinelearning.jobexecutor.compute;
 
+import com.boulmier.machinelearning.request.Request;
+import com.boulmier.machinelearning.request.RequestProperty;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author antho
  */
 public abstract class Computer {
+
     protected Computer sub = null;
     protected final String data;
     protected final ComputeProperties properties;
+
     public Computer(Computer subComputer) {
         sub = subComputer;
         data = sub.getData();
@@ -25,12 +30,14 @@ public abstract class Computer {
         this.data = data;
         this.properties = properties;
     }
-    
-    public void compute(){
-       if(sub != null) sub.compute();
+
+    public void compute() {
+        if (sub != null) {
+            sub.compute();
+        }
     }
-    
-    private String getData(){
+
+    private String getData() {
         return data;
     }
 
@@ -39,32 +46,19 @@ public abstract class Computer {
     }
 
     public static class ComputeProperties {
-        public static enum PropertyName {
-             
-            FILENAME,  //used in storage computer
-            EMAIL,     //used in sender computer
-            CONTAINER, //used in swift storage (next version with swift)
-            ENCODING,
-            JOBID     //used in all kind of compute methode
-            //...
-            
+
+        private final Map<RequestProperty, String> dbproperties;
+
+        private ComputeProperties(Map<RequestProperty,String> setup) {
+            dbproperties = setup;
         }
-        private final HashMap<PropertyName,String> dbproperties = new HashMap<>();
-        
-        /**
-         * add a new properties (erase the previous one)
-         * @param id
-         * @param value 
-         */
-        public void addProperties(PropertyName id, String value){
-            dbproperties.put(id, value);
+
+        public static ComputeProperties buildFromRequest(Request req) {
+            return new ComputeProperties(req.extractSetup());
         }
-        
-        public String getPropertyValue(PropertyName id){
-            switch(id){
-                case ENCODING:
-                    return dbproperties.getOrDefault(id, "UTF-8");
-            }
+
+        public String getProperty(RequestProperty id) {
+            assert (dbproperties.containsKey(id));
             return dbproperties.get(id);
         }
     }

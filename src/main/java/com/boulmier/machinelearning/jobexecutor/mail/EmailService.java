@@ -12,7 +12,6 @@ import org.codemonkey.simplejavamail.*;
 public class EmailService {
     
     private static final String smtp_server = "smtp.gmail.com";
-    private static String user, password;
     private static final int port = 465;
     /**
      * send an email to clientEmail with an included file

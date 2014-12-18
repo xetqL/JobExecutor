@@ -5,7 +5,8 @@
  */
 package com.boulmier.machinelearning.jobexecutor.compute;
 
-import com.boulmier.machinelearning.jobexecutor.compute.Computer.ComputeProperties.PropertyName;
+import com.boulmier.machinelearning.jobexecutor.JobExecutor;
+import com.boulmier.machinelearning.request.RequestProperty;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,7 +18,8 @@ import java.io.Writer;
  * @author antho
  */
 public class StorageComputer extends Computer {
-
+    private final String DEFAULT_ENCODING_MODE = "UTF-8";
+    
     public StorageComputer(Computer subComputer) {
         super(subComputer);
     }
@@ -31,11 +33,13 @@ public class StorageComputer extends Computer {
         super.compute();
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(
-                        properties.getPropertyValue(PropertyName.FILENAME)), 
-                        properties.getPropertyValue(PropertyName.ENCODING)))
+                        properties.getProperty(RequestProperty.JOB_IDENTIFIER)), 
+                        this.DEFAULT_ENCODING_MODE))
                 ) {
             writer.write(data);
-        } catch (IOException ex) {}
+        } catch (IOException ex) {
+            JobExecutor.logger.error("cannot save data from "+properties.getProperty(RequestProperty.JOB_IDENTIFIER)+" to disk");
+        }
     }
 
 }
