@@ -5,10 +5,9 @@
  */
 package com.boulmier.machinelearning.jobexecutor.compute;
 
+import com.boulmier.machinelearning.jobexecutor.JobExecutor;
 import com.boulmier.machinelearning.request.Property;
 import com.boulmier.machinelearning.request.Request;
-import com.boulmier.machinelearning.request.RequestProperty;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -59,8 +58,15 @@ public abstract class Computer {
         }
 
         public String getProperty(Property id) {
-            assert (dbproperties.containsKey(id));
-            return dbproperties.get(id);
+
+            try{
+                String ret = dbproperties.get(id);
+                if(ret == null) throw new UnspecifiedPropertyException();
+                return ret;
+            }catch(UnspecifiedPropertyException un){
+                JobExecutor.logger.error(un.getMessage());
+            }
+            return null;
         }
     }
 }

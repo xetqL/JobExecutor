@@ -5,6 +5,8 @@
  */
 package com.boulmier.machinelearning.jobexecutor.encrypted;
 
+import com.boulmier.machinelearning.jobexecutor.JobExecutor;
+
 /**
  *
  * @author anthob
@@ -21,17 +23,30 @@ public class EncryptedCredential extends Credential {
         this.aes = aes;
         return this;
     }
-
+    
+    private String getDecryptedCredential(final String credential) throws NoDecrypterProvidedException{
+         if(aes == null) throw new NoDecrypterProvidedException();
+         return aes.decrypt(credential);
+    }
+    
     @Override
     public String getUser() {
-        assert (aes != null);
-        return aes.decrypt(super.getUser());
+        try {
+            return getDecryptedCredential(super.getUser());
+        } catch (NoDecrypterProvidedException ex) {
+            JobExecutor.logger.error(ex.getMessage());
+            return null;
+        }
     }
 
     @Override
     public String getPassword() {
-        assert (aes != null);
-        return aes.decrypt(super.getPassword()); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return getDecryptedCredential(super.getPassword());
+        } catch (NoDecrypterProvidedException ex) {
+            JobExecutor.logger.error(ex.getMessage());
+            return null;
+        }
     }
 
     public Credential returnAsCredential() {

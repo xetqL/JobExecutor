@@ -18,8 +18,9 @@ import java.io.Writer;
  * @author antho
  */
 public class StorageComputer extends Computer {
+
     private final String DEFAULT_ENCODING_MODE = "UTF-8";
-    
+
     public StorageComputer(Computer subComputer) {
         super(subComputer);
     }
@@ -33,12 +34,12 @@ public class StorageComputer extends Computer {
         super.compute();
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(
-                        properties.getProperty(RequestProperty.JOB_IDENTIFIER)), 
-                        this.DEFAULT_ENCODING_MODE))
-                ) {
+                        properties.getProperty(RequestProperty.JOB_IDENTIFIER)),
+                this.DEFAULT_ENCODING_MODE))) 
+        {
             writer.write(data);
         } catch (IOException ex) {
-            JobExecutor.logger.error("cannot save data from "+properties.getProperty(RequestProperty.JOB_IDENTIFIER)+" to disk");
+            JobExecutor.logger.error("cannot save data from " + properties.getProperty(RequestProperty.JOB_IDENTIFIER) + " to disk");
         }
     }
 

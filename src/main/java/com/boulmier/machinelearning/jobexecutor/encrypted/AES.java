@@ -5,7 +5,6 @@
  */
 package com.boulmier.machinelearning.jobexecutor.encrypted;
 
-
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -28,10 +27,10 @@ public class AES {
     public AES(String key) {
         this.setKey(key);
     }
-    
-    private final void setKey(String myKey) {
 
-        MessageDigest sha = null;
+    private void setKey(String myKey) {
+
+        MessageDigest sha;
         try {
             key = myKey.getBytes("UTF-8");
             sha = MessageDigest.getInstance("SHA-1");
@@ -44,7 +43,7 @@ public class AES {
 
     }
 
-    private String encrypt(String strToEncrypt) {
+    public String encrypt(String strToEncrypt) {
         try {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
 
@@ -53,11 +52,9 @@ public class AES {
             return (Base64.encodeBase64String(cipher.doFinal(strToEncrypt.getBytes("UTF-8"))));
 
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException e) {
-
             System.out.println("Error while encrypting: " + e.toString());
         }
         return null;
-
     }
 
     public String decrypt(String strToDecrypt) {
@@ -76,4 +73,3 @@ public class AES {
     }
 
 }
-

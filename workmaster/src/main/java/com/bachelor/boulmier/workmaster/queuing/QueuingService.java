@@ -1,19 +1,13 @@
 package com.bachelor.boulmier.workmaster.queuing;
 
-import com.boulmier.machinelearning.request.ExecutableName;
 import com.boulmier.machinelearning.request.Request;
-import com.boulmier.machinelearning.request.RequestBuilder;
-import com.boulmier.machinelearning.request.RequestProperty;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.InstanceCreator;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import java.io.Closeable;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.EnumMap;
 
 /**
  *

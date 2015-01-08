@@ -25,7 +25,7 @@ import org.apache.commons.exec.PumpStreamHandler;
  *
  * @author antho
  */
-public abstract class Job {
+public class Job {
 
     protected String jobid;
     protected CommandLine cl;
@@ -48,7 +48,6 @@ public abstract class Job {
         exec.setWatchdog(wd);
         exec.setStreamHandler(output);
         exec.execute(cl, handler);
-
         JobExecutor.logger.info("Running job " + jobid);
 
         new Thread(new Runnable() {
@@ -59,7 +58,7 @@ public abstract class Job {
                     handler.waitFor();
                     Computer.ComputeProperties properties = Computer.ComputeProperties.buildFromRequest(req);
                     new SenderComputer(new StorageComputer(out.toString(), properties)).compute();
-                    JobExecutor.logger.info("Job is complete " + jobid);
+                    JobExecutor.logger.info("Job complete " + jobid);
                 } catch (InterruptedException ex) {
                     exec.getWatchdog().destroyProcess();
                     JobExecutor.logger.error("Job (" + jobid + ") has been destroyed due to internal error "+ex.getMessage());
@@ -73,13 +72,20 @@ public abstract class Job {
     private CommandLine generateCommandLine(Request req) {
         StringBuilder argumentBuilder;
         this.executableName = req.getExcutableNameAsString();
-        this.cl = new CommandLine(executableName);
+        this.cl = new CommandLine("cat");
+        
+        
         for (Map.Entry<Property<String,String>, String> entry : req) {
             if (RequestProperty.isNull(entry.getKey())) {
                 argumentBuilder = new StringBuilder()
                         .append(entry.getKey().getB())
                         .append(" ")
                         .append(entry.getValue());
+                this.cl.addArgument(argumentBuilder.toString());
+            }
+            if(RequestProperty.ARGS == entry.getKey()){
+                argumentBuilder = new StringBuilder().append(entry.getValue());
+                
                 this.cl.addArgument(argumentBuilder.toString());
             }
         }

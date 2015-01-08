@@ -7,17 +7,19 @@ package com.boulmier.machinelearning.jobexecutor;
 
 import com.boulmier.machinelearning.jobexecutor.config.JobExecutorConfig;
 import com.boulmier.machinelearning.jobexecutor.consumer.RequestConsumer;
-import com.boulmier.machinelearning.jobexecutor.encrypted.CredentialProvider;
+import com.boulmier.machinelearning.jobexecutor.encrypted.AES;
+import com.boulmier.machinelearning.jobexecutor.job.Job;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
 import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
+import com.boulmier.machinelearning.request.ExecutableName;
+import com.boulmier.machinelearning.request.Request;
+import com.boulmier.machinelearning.request.RequestBuilder;
+import com.boulmier.machinelearning.request.RequestProperty;
 import com.jezhumble.javasysmon.*;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.QueueingConsumer;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.UUID;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -33,7 +35,7 @@ import org.apache.commons.cli.ParseException;
  * @author Boulmier
  */
 public class JobExecutor {
-
+    
     @SuppressWarnings("static-access")
     public static Options defineOptions() {
         Options softwareOptions = new Options();
@@ -65,7 +67,7 @@ public class JobExecutor {
                 debugOption = OptionBuilder.withArgName(JobExecutorConfig.OPTIONS.CMD.SHORTDEBUGFIELD)
                 .withLongOpt(JobExecutorConfig.OPTIONS.CMD.LONGDEBUGFIELD)
                 .create();
-
+        
         softwareOptions.addOption(ipOption);
         softwareOptions.addOption(portOption);
         softwareOptions.addOption(mongoIpOption);
@@ -74,15 +76,16 @@ public class JobExecutor {
         softwareOptions.addOption(decryptKeyOption);
         return softwareOptions;
     }
-
+    
     public static JavaSysMon sysMon;
     public static boolean debugState;
     public static ILogger logger;
     public static String decryptKey;
+
     public static void main(String[] args) throws ParseException, IOException, InterruptedException {
         Options options = defineOptions();
         sysMon = new JavaSysMon();
-        InetAddress vmscheduler_ip = null, mongodb_ip = null;
+        InetAddress vmscheduler_ip, mongodb_ip = null;
         Integer vmscheduler_port = null, mongodb_port = null;
         CommandLineParser parser = new BasicParser();
         
@@ -97,20 +100,21 @@ public class JobExecutor {
             vmscheduler_ip = InetAddress.getByName(cmd.getOptionValue(JobExecutorConfig.OPTIONS.CMD.LONGIPFIELD));
             
             decryptKey = cmd.getOptionValue("decrypt-key");
+            
             debugState = cmd.hasOption(JobExecutorConfig.OPTIONS.CMD.LONGDEBUGFIELD);
-
+            
             logger = LoggerFactory.getLogger();
             logger.info("Attempt to connect on master @" + vmscheduler_ip + ":" + vmscheduler_port);
             
             new RequestConsumer().start();
 
         } catch (MissingOptionException moe) {
-            logger.error(moe.getMissingOptions()+" are missing");
+            logger.error(moe.getMissingOptions() + " are missing");
             HelpFormatter help = new HelpFormatter();
             help.printHelp(JobExecutor.class.getSimpleName(), options);
-
+            
         } catch (UnknownHostException ex) {
-            logger.error( ex.getMessage() );
+            logger.error(ex.getMessage());
         } finally {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override

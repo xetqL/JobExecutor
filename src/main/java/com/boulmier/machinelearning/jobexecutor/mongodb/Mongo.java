@@ -12,7 +12,6 @@ import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoTimeoutException;
-import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Map;
 

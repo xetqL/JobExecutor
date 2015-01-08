@@ -6,11 +6,9 @@
 package com.boulmier.machinelearning.jobexecutor.consumer;
 
 import com.boulmier.machinelearning.jobexecutor.JobExecutor;
+import com.boulmier.machinelearning.jobexecutor.job.Job;
 import com.boulmier.machinelearning.request.*;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
-import com.google.gson.reflect.TypeToken;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -82,6 +80,8 @@ public class RequestConsumer extends Thread {
                 Request r = Request.fromString(message);
                 channel.basicAck(delivery.getEnvelope().getDeliveryTag(), true);
                 System.out.println(r);
+                System.out.println(r.extractSetup());
+                new Job(r,r.getJobIdentifier()).start();
             } catch (InterruptedException ex) {
                 JobExecutor.logger.error(ex.getMessage());
             } catch (IOException ex) {
@@ -89,5 +89,4 @@ public class RequestConsumer extends Thread {
             }
         }
     }
-
 }

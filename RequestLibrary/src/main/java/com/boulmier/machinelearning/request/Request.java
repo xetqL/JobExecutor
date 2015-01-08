@@ -146,7 +146,11 @@ public class Request implements Iterable<Map.Entry<Property<String, String>, Str
                 Iterator<Map.Entry<String,String>> subIt = entry.getValue().entrySet().iterator();
                 while(subIt.hasNext()){
                     Map.Entry<String,String> subEntry = subIt.next();
-                    r.setProperty(Property.fromString(subEntry.getKey()), subEntry.getValue());
+                    try{
+                        r.setProperty(Property.fromString(subEntry.getKey()), subEntry.getValue());
+                    }catch(BadPropertyFormattingException bpfe){
+                        System.err.println("error while formatting property");
+                    }
                 }
             }   
         }catch(ParseException pe){

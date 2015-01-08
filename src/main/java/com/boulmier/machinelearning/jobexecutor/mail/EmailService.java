@@ -25,9 +25,9 @@ public class EmailService {
         DataSource ds = new FileDataSource(result);
         e.setFromAddress("hepiacloud", cred.getUser());
         e.addRecipient("Client", clientEmail, Message.RecipientType.TO);
-        e.addAttachment("job_result", ds);
+        e.addAttachment("job_result.txt", ds);
         e.setTextHTML("<h1> Here is the result of your job execution on hepiacloud</h1><br/><p>please doesn't respond to this email</p>");
         e.setSubject("Result of your job execution on hepiacloud");
-        new Mailer(smtp_server,port,cred.getUser(), cred.getPassword(),  TransportStrategy.SMTP_SSL).sendMail(e);
+        new Mailer(smtp_server,port, cred.getUser(), cred.getPassword(),  TransportStrategy.SMTP_SSL).sendMail(e);
     }
 }

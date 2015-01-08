@@ -10,10 +10,9 @@ import com.bachelor.boulmier.workmaster.config.MasterConfig;
 import com.boulmier.machinelearning.jobexecutor.logging.ILogger;
 import com.boulmier.machinelearning.jobexecutor.logging.LoggerFactory;
 import com.boulmier.machinelearning.request.*;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jezhumble.javasysmon.JavaSysMon;
 import java.io.IOException;
+import java.util.UUID;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -109,7 +108,7 @@ public class WorkMaster {
             }
             if (cmd.hasOption(MasterConfig.CMD.REMOTEWSLONGOPT)) {
                 webServer = cmd.getOptionValue(MasterConfig.CMD.REMOTEWSLONGOPT);
-                if (!webServer.matches("^" + MasterConfig.DEFAULT.IP_PATTERN + ":" + MasterConfig.DEFAULT.PORT_PATTERN)) {
+                if (!MasterConfig.DEFAULT.IP_PORT_PATTERN.matcher(webServer).matches()) {
                     throw new ParseException("Given IP:PORT does not match pattern");
                 }
             }
@@ -122,8 +121,10 @@ public class WorkMaster {
 
             QueuingService.get().send(
                     RequestBuilder.builder()
-                    .withExecutableName(ExecutableName.SLEEP)
-                    .with(RequestProperty.ARGS, "1000").create()
+                    .withExecutableName(ExecutableName.CAT)
+                    .with(RequestProperty.CLIENT_EMAIL, "anthony.boulmier.cfpt@gmail.com")
+                    .with(RequestProperty.JOB_IDENTIFIER, UUID.randomUUID().toString())
+                    .with(RequestProperty.ARGS, "JobExecutor.log").create()
             );
             Thread.sleep(3000);
 
