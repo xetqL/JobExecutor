@@ -5,9 +5,6 @@
  */
 package com.boulmier.machinelearning.jobexecutor.config;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 /**
  *
  * @author Boulmier

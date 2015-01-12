@@ -33,8 +33,7 @@ public class StorageComputer extends Computer {
     public void compute() {
         super.compute();
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(
-                        properties.getProperty(RequestProperty.JOB_IDENTIFIER)),
+                new FileOutputStream(properties.getProperty(RequestProperty.JOB_IDENTIFIER)),
                 this.DEFAULT_ENCODING_MODE))) 
         {
             writer.write(data);
@@ -42,5 +41,4 @@ public class StorageComputer extends Computer {
             JobExecutor.logger.error("cannot save data from " + properties.getProperty(RequestProperty.JOB_IDENTIFIER) + " to disk");
         }
     }
-
 }
