@@ -20,7 +20,7 @@ public class CredentialProvider{
     private static final Map<CredentialSource, EncryptedCredential> credentialDB = new HashMap<>();
     
     static {
-        credentialDB.put( CredentialSource.EMAIL, new EncryptedCredential( "pP/l2Eo0ltz+THSCQ7ZlH5Gsrqc3rVcFdd70gTeXi00=", "4UMQhLBiJUcdb60kv2eqdA==") );
+        credentialDB.put( CredentialSource.EMAIL, new EncryptedCredential("","");
     }
 
     public static Credential provideCredential(String key, CredentialSource source){
